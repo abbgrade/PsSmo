@@ -1,6 +1,6 @@
 requires Configuration
 
-[System.IO.FileInfo] $global:Manifest = "$PSScriptRoot/../src/PsSmo/bin/$Configuration/netstandard2.0/publish/PsSmo.psd1"
+[System.IO.FileInfo] $global:Manifest = "$PSScriptRoot/../src/PsSmo/bin/$Configuration/netcoreapp2.1/publish/PsSmo.psd1"
 
 # Synopsis: Build project.
 task Build {
