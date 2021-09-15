@@ -11,8 +11,9 @@ Install-Module -Name PsSmo -Scope CurrentUser
 ```
 
 Alternatively it can be build and installed from source.
+
 1. Install the development dependencies
-2. Download or clone it from GitHub and r
+2. Download or clone it from GitHub
 3. Run the installation task:
 
 ```powershell
@@ -23,9 +24,9 @@ Invoke-Build Install
 
 TODO
 
-## Development
+Execute SQLCMD scripts like those created by [DacFX](https://github.com/microsoft/DacFx).
 
-![CI](https://github.com/abbgrade/PsSmo/workflows/CI/badge.svg)
+## Development
 
 - This is a [Portable Module](https://docs.microsoft.com/de-de/powershell/scripting/dev-cross-plat/writing-portable-modules?view=powershell-7) based on [PowerShell Standard](https://github.com/powershell/powershellstandard) and [.NET Standard](https://docs.microsoft.com/en-us/dotnet/standard/net-standard).
 - [VSCode](https://code.visualstudio.com) is recommended as IDE. [VSCode Tasks](https://code.visualstudio.com/docs/editor/tasks) are configured.
@@ -35,12 +36,14 @@ TODO
 
 ### Commands
 
-| Command                 | Description                                             | Status  |
-| ----------------------- | ------------------------------------------------------- | ------- |
-| Connect-Instance        | Create a new database connection.                       | &#9745; |
-| Disconnect-Instance     | Close connection                                        | &#9745; |
-| Invoke-Command          | Execute sql scripts                                     | &#9744; |
-| &#11185; SQLCMD support | Support SQLCMD feature like variables and event handler | &#9744; |
+| Command                         | Description                             | Status  |
+| ------------------------------- | --------------------------------------- | ------- |
+| Connect-Instance                | Create a new database connection.       | &#9745; |
+| Disconnect-Instance             | Close connection                        | &#9745; |
+| Invoke-Command                  | Execute SQLCMD scripts                  | &#9744; |
+| &#11185; Batch support          | Support `GO` statements                 | &#9745; |
+| &#11185; Variable support       | Support variables like `$(variable)`    | &#9744; |
+| &#11185; SQLCMD command support | Support SQLCMD commans like `:on error` | &#9744; |
 
 ### Build
 
