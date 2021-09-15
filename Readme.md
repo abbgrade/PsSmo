@@ -26,6 +26,16 @@ TODO
 
 Execute SQLCMD scripts like those created by [DacFX](https://github.com/microsoft/DacFx).
 
+## Changelog
+
+### 0.1.0
+
+- Added `Connect-SmoInstance` and `Disconnect-SmoInstance` commands.
+
+### 0.2.0
+
+- Added `Invoke-SmoCommand` with batch support (`GO` statement)
+
 ## Development
 
 - This is a [Portable Module](https://docs.microsoft.com/de-de/powershell/scripting/dev-cross-plat/writing-portable-modules?view=powershell-7) based on [PowerShell Standard](https://github.com/powershell/powershellstandard) and [.NET Standard](https://docs.microsoft.com/en-us/dotnet/standard/net-standard).
