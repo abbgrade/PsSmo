@@ -9,7 +9,11 @@
     Copyright = '(c) 2021 Steffen Kampmann. Alle Rechte vorbehalten.'
     Description = 'The PowerShell SQL Client module replaces the SQL Server utilities SQLCMD with native PowerShell commands.'
 
-    CmdletsToExport = @('Connect-Instance', 'Disconnect-Instance')
+    CmdletsToExport = @(
+        'Connect-Instance',
+        'Disconnect-Instance',
+        'Invoke-Command'
+    )
 
     PrivateData = @{
 

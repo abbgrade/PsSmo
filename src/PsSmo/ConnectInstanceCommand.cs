@@ -4,7 +4,7 @@ using Microsoft.SqlServer.Management.Common;
 using System.Management.Automation;
 using System.Data.SqlClient;
 
-namespace PsSqlClient
+namespace PsSmo
 {
     [Cmdlet(VerbsCommunications.Connect, "Instance")]
     [OutputType(typeof(Server))]
