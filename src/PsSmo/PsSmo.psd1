@@ -1,6 +1,6 @@
 @{
     RootModule = 'PsSmo.dll'
-    ModuleVersion = '0.1.0'
+    ModuleVersion = '0.2.0'
     DefaultCommandPrefix = 'Smo'
     PowerShellVersion = '7.0'
 
@@ -20,6 +20,9 @@
         PSData = @{
             Category = 'Databases'
             Tags = @('sql', 'sqlserver', 'sqlclient')
+            LicenseUri = 'https://github.com/abbgrade/PsSmo/blob/main/LICENSE'
+            ProjectUri = 'https://github.com/abbgrade/PsSmo'
+            IsPrerelease = 'True'
         }
     }
 }
