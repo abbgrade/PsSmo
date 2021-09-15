@@ -1,6 +1,6 @@
 @{
     RootModule = 'PsSmo.dll'
-    ModuleVersion = '0.1.0'
+    ModuleVersion = '0.2.0'
     DefaultCommandPrefix = 'Smo'
     PowerShellVersion = '7.0'
 
@@ -9,13 +9,20 @@
     Copyright = '(c) 2021 Steffen Kampmann. Alle Rechte vorbehalten.'
     Description = 'The PowerShell SQL Client module replaces the SQL Server utilities SQLCMD with native PowerShell commands.'
 
-    CmdletsToExport = @('Connect-Instance', 'Disconnect-Instance')
+    CmdletsToExport = @(
+        'Connect-Instance',
+        'Disconnect-Instance',
+        'Invoke-Command'
+    )
 
     PrivateData = @{
 
         PSData = @{
             Category = 'Databases'
             Tags = @('sql', 'sqlserver', 'sqlclient')
+            LicenseUri = 'https://github.com/abbgrade/PsSmo/blob/main/LICENSE'
+            ProjectUri = 'https://github.com/abbgrade/PsSmo'
+            IsPrerelease = 'True'
         }
     }
 }
