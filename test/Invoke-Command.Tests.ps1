@@ -64,42 +64,53 @@ Describe 'Invoke-Command' {
                     $script:Instance | Disconnect-SmoInstance
                 }
 
-                It 'works' {
-                    Invoke-SmoCommand -Command 'SELECT 1'
-                }
-
-                It 'returns select' {
-                    ( Invoke-SmoCommand -Command 'SELECT 1 as col' ).col | Should -Be '1'
-                }
-
-                It 'works with separator' {
-                    Invoke-SmoCommand -Command @'
-SELECT 1
-GO
-
-SELECT 2
-GO
-'@
-                }
-
-                It 'works with two results' {
-                    $result = Invoke-SmoCommand -Command @'
-SELECT 1 AS a
-
-SELECT 2 AS b
-'@
-                    $result[0].a | Should -Be 1
-                    $result[1].b | Should -Be 2
-                }
-
-                It 'works with variables' {
-                    Invoke-SmoCommand -Command 'SELECT ''$(foo)'''
-                }
-
                 It 'throws on error' {
                     {
                         Invoke-SmoCommand -Command 'SELECT 1/0'
                     } | Should -Throw
+                }
+
+                Context 'SQLCMD' {
+
+                    It 'works with separator' {
+                        Invoke-SmoCommand -Command @'
+PRINT 'foo'
+GO
+
+PRINT 'bar'
+GO
+'@
+                    }
+
+                    It 'throws with undefined variables' {
+                        {
+                            Invoke-SmoCommand -Command 'PRINT ''$(foo)'''
+                        } | Should -Throw
+                    }
+
+                    It 'works with defined variables' {
+                        Invoke-SmoCommand -Command 'PRINT ''$(foo)''' -Variables @{ foo = 'bar' } -Verbose
+                    }
+
+                    It 'works with :on error' {
+                        Invoke-SmoCommand -Command @'
+GO
+:on error exit
+GO
+'@
+                    }
+
+                    It 'works with :setvar' {
+                        Invoke-SmoCommand -Command @'
+:setvar __IsSqlCmdEnabled "True"
+GO
+IF N'$(__IsSqlCmdEnabled)' NOT LIKE N'True'
+    BEGIN
+        PRINT N'SQLCMD mode must be enabled to successfully execute this script.';
+        SET NOEXEC ON;
+    END
+'@
+                    }
                 }
             }
         }

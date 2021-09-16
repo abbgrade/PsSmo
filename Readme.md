@@ -34,7 +34,11 @@ Execute SQLCMD scripts like those created by [DacFX](https://github.com/microsof
 
 ### 0.2.0
 
-- Added `Invoke-SmoCommand` with batch support (`GO` statement)
+- Added `Invoke-SmoCommand` with batch support (`GO` statement).
+
+### 0.3.0
+
+- Added `$(Variable)` and `:setvar Variable Value`  support.
 
 ## Development
 
@@ -52,7 +56,9 @@ Execute SQLCMD scripts like those created by [DacFX](https://github.com/microsof
 | Disconnect-Instance             | Close connection                        | &#9745; |
 | Invoke-Command                  | Execute SQLCMD scripts                  | &#9744; |
 | &#11185; Batch support          | Support `GO` statements                 | &#9745; |
-| &#11185; Variable support       | Support variables like `$(variable)`    | &#9744; |
+| &#11185; File support           | Script source from file                 | &#9745; |
+| &#11185; Variable support       | Support variables like `$(variable)`    | &#9745; |
+| &#11185; :setvar support        | Support `:setvar`                       | &#9745; |
 | &#11185; SQLCMD command support | Support SQLCMD commans like `:on error` | &#9744; |
 
 ### Build
