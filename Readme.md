@@ -34,7 +34,11 @@ Execute SQLCMD scripts like those created by [DacFX](https://github.com/microsof
 
 ### 0.2.0
 
-- Added `Invoke-SmoCommand` with batch support (`GO` statement)
+- Added `Invoke-SmoCommand` with batch support (`GO` statement).
+
+### 0.3.0
+
+- Added `$(Variable)` and `:setvar Variable Value`  support.
 
 ## Development
 
