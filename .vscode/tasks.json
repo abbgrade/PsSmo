@@ -67,6 +67,7 @@
             "group": "test",
             "type": "shell",
             "command": "Invoke-Pester",
+            "args": ["-Output", "Detailed"],
             "options": {
                 "cwd": "test"
             },
@@ -81,7 +82,7 @@
             "label": "install",
             "type": "shell",
             "command": "Invoke-Build",
-            "args": ["install"],
+            "args": ["install", "-Configuration", "Release"],
             "problemMatcher": "$msCompile",
             "presentation": {
                 "echo": false,
