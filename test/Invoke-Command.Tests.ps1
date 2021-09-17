@@ -111,6 +111,15 @@ IF N'$(__IsSqlCmdEnabled)' NOT LIKE N'True'
     END
 '@
                     }
+
+                    It 'ignores comments' {
+                        Invoke-SmoCommand -Command @'
+/*
+:setvar foo $(foo)
+*/
+PRINT '$(foo)'
+'@ -Variables @{ foo = 'bar' }
+                    }
                 }
             }
         }
