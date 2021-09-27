@@ -26,6 +26,19 @@ TODO
 
 Execute SQLCMD scripts like those created by [DacFX](https://github.com/microsoft/DacFx).
 
+### Commands
+
+| Command                         | Description                             | Status  |
+| ------------------------------- | --------------------------------------- | ------- |
+| Connect-Instance                | Create a new database connection.       | &#9745; |
+| Disconnect-Instance             | Close connection                        | &#9745; |
+| Invoke-Command                  | Execute SQLCMD scripts                  | &#9744; |
+| &#11185; Batch support          | Support `GO` statements                 | &#9745; |
+| &#11185; File support           | Script source from file                 | &#9745; |
+| &#11185; Variable support       | Support variables like `$(variable)`    | &#9745; |
+| &#11185; :setvar support        | Support `:setvar`                       | &#9745; |
+| &#11185; SQLCMD command support | Support SQLCMD commans like `:on error` | &#9744; |
+
 ## Changelog
 
 ### 0.1.0
@@ -47,19 +60,6 @@ Execute SQLCMD scripts like those created by [DacFX](https://github.com/microsof
 - Build automation is based on [InvokeBuild](https://github.com/nightroman/Invoke-Build)
 - Test automation is based on [Pester](https://pester.dev)
 - Commands are named based on [Approved Verbs for PowerShell Commands](https://docs.microsoft.com/de-de/powershell/scripting/developer/cmdlet/approved-verbs-for-windows-powershell-commands)
-
-### Commands
-
-| Command                         | Description                             | Status  |
-| ------------------------------- | --------------------------------------- | ------- |
-| Connect-Instance                | Create a new database connection.       | &#9745; |
-| Disconnect-Instance             | Close connection                        | &#9745; |
-| Invoke-Command                  | Execute SQLCMD scripts                  | &#9744; |
-| &#11185; Batch support          | Support `GO` statements                 | &#9745; |
-| &#11185; File support           | Script source from file                 | &#9745; |
-| &#11185; Variable support       | Support variables like `$(variable)`    | &#9745; |
-| &#11185; :setvar support        | Support `:setvar`                       | &#9745; |
-| &#11185; SQLCMD command support | Support SQLCMD commans like `:on error` | &#9744; |
 
 ### Build
 
