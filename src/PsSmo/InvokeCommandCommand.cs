@@ -41,7 +41,6 @@ namespace PsSmo
         {
             base.ProcessRecord();
 
-            var database = Instance.Databases[Instance.ConnectionContext.CurrentDatabase];
             switch (ParameterSetName)
             {
                 case "Text":
@@ -55,16 +54,19 @@ namespace PsSmo
                     throw new NotImplementedException($"ParameterSetName {ParameterSetName} is not implemented");
             }
 
-            database.ExecuteNonQuery(sqlCommand: processSqlCmdText(Text, processVariables(Variables)));
+            Instance.ConnectionContext.ExecuteNonQuery(sqlCommand: processSqlCmdText(Text, processVariables(Variables)));
         }
 
         private Dictionary<string, string> processVariables(Hashtable variables)
         {
             var variableDictionary = new Dictionary<string, string>();
 
-            foreach (string key in variables.Keys)
+            foreach (DictionaryEntry variable in variables)
             {
-                variableDictionary.Add(key, (string)variables[key]);
+                variableDictionary.Add(
+                    variable.Key.ToString(), 
+                    variable.Value.ToString()
+                );
             }
 
             return variableDictionary;
@@ -75,8 +77,11 @@ namespace PsSmo
             var result = new List<string>();
             var variableRegex = new Regex(@"\$\((\w*)\)");
             var setVarRegex = new Regex(@":setvar (\w+) (.+)");
+            var commentRegex = new Regex(@"/\*(.|\n)*?\*/");
 
-            foreach (var line in text.Split(Environment.NewLine))
+            string processedText = commentRegex.Replace(text, replacement: "");
+
+            foreach (var line in processedText.Split(Environment.NewLine))
             {
                 if (false) { }
                 else if (line.Trim().StartsWith(":on error", StringComparison.CurrentCultureIgnoreCase))
@@ -99,18 +104,23 @@ namespace PsSmo
                 else
                 {
                     var processedLine = line;
-                    foreach(var tuple in variables)
+                    foreach(var variable in variables)
                     {
-                        processedLine = processedLine.Replace($"$({tuple.Key})", tuple.Value);
+                        processedLine = processedLine.Replace($"$({variable.Key})", variable.Value);
                     }
 
                     var match = variableRegex.Match(input: processedLine);
                     if (match.Success)
                     {
+                        foreach(var variable in variables)
+                        {
+                            WriteWarning($"$({variable.Key}) = '{variable.Value}'");
+                        }
                         throw new InvalidOperationException($"Value for variable {match.Value} was not given.");
                     }
 
                     result.Add(processedLine);
+                    WriteVerbose(processedLine);
                 }
             }
             return string.Join(separator: Environment.NewLine, result);
