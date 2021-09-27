@@ -53,6 +53,11 @@ Execute SQLCMD scripts like those created by [DacFX](https://github.com/microsof
 
 - Added `$(Variable)` and `:setvar Variable Value`  support.
 
+### 0.4.0
+
+- Added more parameter sets for `Connect-SmoInstance`.
+- Fixed connection exception for Azure SQL.
+
 ## Development
 
 - This is a [Portable Module](https://docs.microsoft.com/de-de/powershell/scripting/dev-cross-plat/writing-portable-modules?view=powershell-7) based on [PowerShell Standard](https://github.com/powershell/powershellstandard) and [.NET Standard](https://docs.microsoft.com/en-us/dotnet/standard/net-standard).
