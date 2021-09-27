@@ -41,7 +41,6 @@ namespace PsSmo
         {
             base.ProcessRecord();
 
-            var database = Instance.Databases[Instance.ConnectionContext.CurrentDatabase];
             switch (ParameterSetName)
             {
                 case "Text":
@@ -55,7 +54,7 @@ namespace PsSmo
                     throw new NotImplementedException($"ParameterSetName {ParameterSetName} is not implemented");
             }
 
-            database.ExecuteNonQuery(sqlCommand: processSqlCmdText(Text, processVariables(Variables)));
+            Instance.ConnectionContext.ExecuteNonQuery(sqlCommand: processSqlCmdText(Text, processVariables(Variables)));
         }
 
         private Dictionary<string, string> processVariables(Hashtable variables)
