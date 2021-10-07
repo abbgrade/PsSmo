@@ -79,9 +79,14 @@ namespace PsSmo
             var result = new List<string>();
             var variableRegex = new Regex(@"\$\((\w*)\)");
             var setVarRegex = new Regex(@":setvar (\w+) ?""(.+)?""");
-            var commentRegex = new Regex(@"/\*(.|\n)*?\*/");
+            var blockCommentRegex = new Regex(@"/\*(.|\n)*?\*/");
+            var lineCommentRegex = new Regex(@"(--.*)");
 
-            var processedText = commentRegex.Replace(text, replacement: "");
+            var processedText = text;
+
+            processedText = blockCommentRegex.Replace(processedText, replacement: "");
+            processedText = lineCommentRegex.Replace(processedText, replacement: "");
+
 
             foreach (var line in processedText.Split(Environment.NewLine))
             {
