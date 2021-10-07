@@ -2,9 +2,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Data;
 using System.IO;
-using System.Linq;
 using System.Management.Automation;
 using System.Text.RegularExpressions;
 using Microsoft.SqlServer.Management.Smo;
@@ -53,7 +51,6 @@ namespace PsSmo
                 default:
                     throw new NotImplementedException($"ParameterSetName {ParameterSetName} is not implemented");
             }
-
             Instance.ConnectionContext.ExecuteNonQuery(sqlCommand: processSqlCmdText(Text, processVariables(Variables)));
         }
 
@@ -76,15 +73,14 @@ namespace PsSmo
         {
             var result = new List<string>();
             var variableRegex = new Regex(@"\$\((\w*)\)");
-            var setVarRegex = new Regex(@":setvar (\w+) (.+)");
+            var setVarRegex = new Regex(@":setvar (\w+) ?""(.+)?""");
             var commentRegex = new Regex(@"/\*(.|\n)*?\*/");
 
             string processedText = commentRegex.Replace(text, replacement: "");
 
             foreach (var line in processedText.Split(Environment.NewLine))
             {
-                if (false) { }
-                else if (line.Trim().StartsWith(":on error", StringComparison.CurrentCultureIgnoreCase))
+                if (line.Trim().StartsWith(":on error", StringComparison.CurrentCultureIgnoreCase))
                 {
                     WriteWarning(":on error is not implemented");
                 }
@@ -120,7 +116,6 @@ namespace PsSmo
                     }
 
                     result.Add(processedLine);
-                    WriteVerbose(processedLine);
                 }
             }
             return string.Join(separator: Environment.NewLine, result);
