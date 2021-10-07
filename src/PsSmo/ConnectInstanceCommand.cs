@@ -184,7 +184,7 @@ namespace PsSmo
 
         private void ConnectionContext_StatementExecuted(object sender, StatementEventArgs e)
         {
-            WriteVerbose(e.ToString().Trim());
+            WriteInformation(messageData: e.SqlStatement, tags: new string[] { "SqlStatement" });
         }
 
         private void ConnectionContext_StateChange(object sender, System.Data.StateChangeEventArgs e)
@@ -194,7 +194,15 @@ namespace PsSmo
 
         private void ConnectionContext_ServerMessage(object sender, ServerMessageEventArgs e)
         {
-            WriteWarning(e.ToString());
+            switch(e.Error.Class)
+            {
+                case 0:
+                    break; // handled in ConnectionContext_InfoMessage
+                default:
+                    WriteWarning($"{e.Error.Class}: {e.Error}");
+                    break;
+            }
+            
         }
 
         private void ConnectionContext_InfoMessage(object sender, SqlInfoMessageEventArgs e)
