@@ -71,6 +71,11 @@ namespace PsSmo
 
         private string processSqlCmdText(string text, Dictionary<string, string> variables)
         {
+            if (variables == null)
+            {
+                variables = new Dictionary<string, string>();
+            }
+
             var result = new List<string>();
             var variableRegex = new Regex(@"\$\((\w*)\)");
             var setVarRegex = new Regex(@":setvar (\w+) ?""(.+)?""");
@@ -88,8 +93,8 @@ namespace PsSmo
                 {
                     var match = setVarRegex.Match(line);
                     if (match.Success) {
-                        string variable = match.Groups[1].Value;
-                        string value = match.Groups[2].Value;
+                        var variable = match.Groups[1].Value;
+                        var value = match.Groups[2].Value;
                         variables[variable] = value;
                     }
                 }
