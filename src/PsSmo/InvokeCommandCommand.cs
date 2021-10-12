@@ -17,6 +17,7 @@ namespace PsSmo
         [Parameter(
             Mandatory = false
         )]
+        [Alias("Connection")]
         public Server Instance { get; set; } = ConnectInstanceCommand.Instance;
 
         [Parameter(
@@ -64,7 +65,7 @@ namespace PsSmo
             foreach (DictionaryEntry variable in variables)
             {
                 variableDictionary.Add(
-                    variable.Key.ToString(), 
+                    variable.Key.ToString(),
                     variable.Value.ToString()
                 );
             }
