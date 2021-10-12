@@ -38,6 +38,7 @@ Execute SQLCMD scripts like those created by [DacFX](https://github.com/microsof
 | &#11185; Variable support       | Support variables like `$(variable)`    | &#9745; |
 | &#11185; :setvar support        | Support `:setvar`                       | &#9745; |
 | &#11185; SQLCMD command support | Support SQLCMD commans like `:on error` | &#9744; |
+| Uninstall-Schema                | Remove a database schema recursively    | &#9744; |
 
 ## Changelog
 
@@ -51,7 +52,7 @@ Execute SQLCMD scripts like those created by [DacFX](https://github.com/microsof
 
 ### 0.3.0
 
-- Added `$(Variable)` and `:setvar Variable Value`  support.
+- Added `$(Variable)` and `:setvar Variable Value` support.
 
 ### 0.4.0
 
