@@ -2,9 +2,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Data;
 using System.IO;
-using System.Linq;
 using System.Management.Automation;
 using System.Text.RegularExpressions;
 using Microsoft.SqlServer.Management.Smo;
@@ -54,7 +52,6 @@ namespace PsSmo
                 default:
                     throw new NotImplementedException($"ParameterSetName {ParameterSetName} is not implemented");
             }
-
             Instance.ConnectionContext.ExecuteNonQuery(sqlCommand: processSqlCmdText(Text, processVariables(Variables)));
         }
 
@@ -75,17 +72,26 @@ namespace PsSmo
 
         private string processSqlCmdText(string text, Dictionary<string, string> variables)
         {
+            if (variables == null)
+            {
+                variables = new Dictionary<string, string>();
+            }
+
             var result = new List<string>();
             var variableRegex = new Regex(@"\$\((\w*)\)");
-            var setVarRegex = new Regex(@":setvar (\w+) (.+)");
-            var commentRegex = new Regex(@"/\*(.|\n)*?\*/");
+            var setVarRegex = new Regex(@":setvar (\w+) ?""(.+)?""");
+            var blockCommentRegex = new Regex(@"/\*(.|\n)*?\*/");
+            var lineCommentRegex = new Regex(@"(--.*)");
 
-            string processedText = commentRegex.Replace(text, replacement: "");
+            var processedText = text;
+
+            processedText = blockCommentRegex.Replace(processedText, replacement: "");
+            processedText = lineCommentRegex.Replace(processedText, replacement: "");
+
 
             foreach (var line in processedText.Split(Environment.NewLine))
             {
-                if (false) { }
-                else if (line.Trim().StartsWith(":on error", StringComparison.CurrentCultureIgnoreCase))
+                if (line.Trim().StartsWith(":on error", StringComparison.CurrentCultureIgnoreCase))
                 {
                     WriteWarning(":on error is not implemented");
                 }
@@ -93,8 +99,8 @@ namespace PsSmo
                 {
                     var match = setVarRegex.Match(line);
                     if (match.Success) {
-                        string variable = match.Groups[1].Value;
-                        string value = match.Groups[2].Value;
+                        var variable = match.Groups[1].Value;
+                        var value = match.Groups[2].Value;
                         variables[variable] = value;
                     }
                 }
@@ -121,7 +127,6 @@ namespace PsSmo
                     }
 
                     result.Add(processedLine);
-                    WriteVerbose(processedLine);
                 }
             }
             return string.Join(separator: Environment.NewLine, result);
