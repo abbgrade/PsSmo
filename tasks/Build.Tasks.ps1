@@ -29,6 +29,7 @@ task Install -Jobs Build, {
     $version = ([System.Version] $info.ModuleVersion)
     $name = $global:Manifest.BaseName
     $defaultModulePath = $env:PsModulePath -split ';' | Select-Object -First 1
+	Write-Verbose "install $name $version to $defaultModulePath"
     $installPath = Join-Path $defaultModulePath $name $version.ToString()
     New-Item -Type Directory $installPath -Force | Out-Null
     Get-ChildItem $global:Manifest.Directory | Copy-Item -Destination $installPath -Recurse -Force
