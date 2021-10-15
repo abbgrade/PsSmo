@@ -38,6 +38,7 @@ Execute SQLCMD scripts like those created by [DacFX](https://github.com/microsof
 | &#11185; Variable support       | Support variables like `$(variable)`    | &#9745; |
 | &#11185; :setvar support        | Support `:setvar`                       | &#9745; |
 | &#11185; SQLCMD command support | Support SQLCMD commans like `:on error` | &#9744; |
+| Uninstall-Schema                | Remove a database schema recursively    | &#9744; |
 
 ## Changelog
 
@@ -51,12 +52,18 @@ Execute SQLCMD scripts like those created by [DacFX](https://github.com/microsof
 
 ### 0.3.0
 
-- Added `$(Variable)` and `:setvar Variable Value`  support.
+- Added `$(Variable)` and `:setvar Variable Value` support.
 
 ### 0.4.0
 
 - Added more parameter sets for `Connect-SmoInstance`.
 - Fixed connection exception for Azure SQL.
+
+### 0.5.0
+
+- Added sql command output handler.
+- Fixed variables with quoted values.
+- Added support for line commends in scripts.
 
 ## Development
 
@@ -78,3 +85,12 @@ The tests scripts are based on Pester. If it is not installed, install it with t
 
 For local testing use the VSCode test tasks or execute the test scripts directly or with `Invoke-Pester`.
 The InvokeBuild test tasks are for CI and do not generate console output.
+
+### Release
+
+1. Create release branch using gitflow.
+2. Update version number in psd1 file.
+3. Update changelog in this readme file.
+4. Uninstall old versions.
+5. publish release using `Invoke-Build Publish`.
+6. finish release using gitflow.

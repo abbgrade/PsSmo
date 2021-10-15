@@ -1,6 +1,9 @@
 <#
 .Synopsis
 	Build script <https://github.com/nightroman/Invoke-Build>
+
+.Example
+	Invoke-Build Publish -Configuration Release -NuGetApiKey xyz
 #>
 
 param(
