@@ -59,6 +59,12 @@ Execute SQLCMD scripts like those created by [DacFX](https://github.com/microsof
 - Added more parameter sets for `Connect-SmoInstance`.
 - Fixed connection exception for Azure SQL.
 
+### 0.5.0
+
+- Added sql command output handler.
+- Fixed variables with quoted values.
+- Added support for line commends in scripts.
+
 ## Development
 
 - This is a [Portable Module](https://docs.microsoft.com/de-de/powershell/scripting/dev-cross-plat/writing-portable-modules?view=powershell-7) based on [PowerShell Standard](https://github.com/powershell/powershellstandard) and [.NET Standard](https://docs.microsoft.com/en-us/dotnet/standard/net-standard).
@@ -79,3 +85,11 @@ The tests scripts are based on Pester. If it is not installed, install it with t
 
 For local testing use the VSCode test tasks or execute the test scripts directly or with `Invoke-Pester`.
 The InvokeBuild test tasks are for CI and do not generate console output.
+
+### Release
+
+1. Create release branch using gitflow.
+2. Update version number in psd1 file.
+3. Update changelog in this readme file.
+4. publish release using `Invoke-Build Publish`.
+5. finish release using gitflow.

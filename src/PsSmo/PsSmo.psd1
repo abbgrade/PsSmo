@@ -1,6 +1,6 @@
 @{
     RootModule = 'PsSmo.dll'
-    ModuleVersion = '0.4.0'
+    ModuleVersion = '0.5.0'
     DefaultCommandPrefix = 'Smo'
     PowerShellVersion = '7.0'
 
