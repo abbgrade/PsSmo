@@ -91,5 +91,6 @@ The InvokeBuild test tasks are for CI and do not generate console output.
 1. Create release branch using gitflow.
 2. Update version number in psd1 file.
 3. Update changelog in this readme file.
-4. publish release using `Invoke-Build Publish`.
-5. finish release using gitflow.
+4. Uninstall old versions.
+5. publish release using `Invoke-Build Publish`.
+6. finish release using gitflow.
