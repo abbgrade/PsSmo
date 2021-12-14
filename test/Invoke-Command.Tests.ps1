@@ -1,16 +1,13 @@
+#Requires -Modules @{ ModuleName='Pester'; ModuleVersion='5.0.0' }
+
 Describe 'Invoke-Command' {
 
     BeforeDiscovery {
-        $script:missingSqlclient = $true
-        $local:psSqlclient = Get-Module -ListAvailable -Name PsSqlClient
-        if ( $local:psSqlclient ) {
-            Import-Module PsSqlClient
-            $script:missingSqlclient = $false
-        }
+        $Script:PsSqlClient = Import-Module PsSqlClient -PassThru -ErrorAction SilentlyContinue
     }
 
     BeforeAll {
-        Import-Module $PSScriptRoot/../src/PsSmo/bin/Debug/netcoreapp2.1/publish/PsSmo.psd1 -Force -ErrorAction 'Stop'
+        Import-Module $PSScriptRoot/../src/PsSmo/bin/Debug/netcoreapp2.1/publish/PsSmo.psd1 -Force -ErrorAction Stop
     }
 
     Context 'LocalDb' -Tag LocalDb {
@@ -43,7 +40,7 @@ Describe 'Invoke-Command' {
             }
         }
 
-        Context 'SqlClient' -Skip:$script:missingSqlclient {
+        Context 'SqlClient' -Skip:( -Not ( $Script:PsSqlClient )) {
 
             BeforeAll {
                 $script:Connection = Connect-TSqlInstance -DataSource $script:DataSource

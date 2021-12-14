@@ -1,10 +1,15 @@
+#Requires -Modules @{ ModuleName='Pester'; ModuleVersion='5.0.0' }
 
-BeforeDiscovery {
-    $Script:PsSmoModule = Import-Module $PSScriptRoot/../src/PsSmo/bin/Debug/netcoreapp2.1/publish/PsSmo.psd1 -Force -PassThru -ErrorAction Continue
-    $Script:PsSqlClient = Import-Module PsSqlClient -PassThru -ErrorAction Continue
-}
+Describe 'Get-Table' {
 
-Describe 'Get-Table' -Skip:( -Not $Script:PsSmoModule ) {
+    BeforeDiscovery {
+        $Script:PsSqlClient = Import-Module PsSqlClient -PassThru -ErrorAction SilentlyContinue
+    }
+
+    BeforeAll {
+        Import-Module $PSScriptRoot/../src/PsSmo/bin/Debug/netcoreapp2.1/publish/PsSmo.psd1 -Force -ErrorAction Stop
+    }
+
     Context 'SqlClient' -Skip:( -Not ( $Script:PsSqlClient )) {
 
         BeforeAll {
