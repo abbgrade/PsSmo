@@ -12,6 +12,7 @@
     CmdletsToExport = @(
         'Connect-Instance',
         'Disconnect-Instance',
+        'Get-Table',
         'Invoke-Command'
     )
 

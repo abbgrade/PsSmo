@@ -51,7 +51,7 @@ Describe 'Invoke-Command' {
 
             AfterAll {
                 if ( $script:Connection ) {
-                    $script:Connection | Disconnect-TSqlInstance
+                    Disconnect-TSqlInstance -Connection $script:Connection
                 }
             }
 
@@ -61,7 +61,7 @@ Describe 'Invoke-Command' {
                 }
 
                 AfterAll {
-                    $script:Instance | Disconnect-SmoInstance
+                    Disconnect-SmoInstance -Instance $script:Instance
                 }
 
                 It 'throws on error' {

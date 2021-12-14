@@ -47,7 +47,7 @@ Describe 'Connect-Instance' {
 
         AfterEach {
             if ( $script:Instance ) {
-                $script:Instance | Disconnect-SmoInstance
+                Disconnect-SmoInstance -Instance $script:Instance
             }
         }
 
@@ -59,7 +59,7 @@ Describe 'Connect-Instance' {
 
             AfterAll {
                 if ( $script:Connection ) {
-                    $script:Connection | Disconnect-TSqlInstance
+                    Disconnect-TSqlInstance -Connection $script:Connection
                 }
             }
 
