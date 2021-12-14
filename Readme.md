@@ -65,6 +65,11 @@ Execute SQLCMD scripts like those created by [DacFX](https://github.com/microsof
 - Fixed variables with quoted values.
 - Added support for line commends in scripts.
 
+### 0.6.0
+
+- Added Get-Table command.
+- Added output to all commands.
+
 ## Development
 
 - This is a [Portable Module](https://docs.microsoft.com/de-de/powershell/scripting/dev-cross-plat/writing-portable-modules?view=powershell-7) based on [PowerShell Standard](https://github.com/powershell/powershellstandard) and [.NET Standard](https://docs.microsoft.com/en-us/dotnet/standard/net-standard).

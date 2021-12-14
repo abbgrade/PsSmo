@@ -1,6 +1,6 @@
 @{
     RootModule = 'PsSmo.dll'
-    ModuleVersion = '0.5.0'
+    ModuleVersion = '0.6.0'
     DefaultCommandPrefix = 'Smo'
     PowerShellVersion = '7.0'
 
@@ -12,6 +12,7 @@
     CmdletsToExport = @(
         'Connect-Instance',
         'Disconnect-Instance',
+        'Get-Table',
         'Invoke-Command'
     )
 

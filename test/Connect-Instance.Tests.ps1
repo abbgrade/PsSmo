@@ -3,12 +3,7 @@
 Describe 'Connect-Instance' {
 
     BeforeDiscovery {
-        $script:missingSqlclient = $true
-        $local:psSqlclient = Get-Module -ListAvailable -Name PsSqlClient
-        if ( $local:psSqlclient ) {
-            Import-Module PsSqlClient
-            $script:missingSqlclient = $false
-        }
+        $Script:PsSqlclient = Import-Module PsSqlClient -PassThru
     }
 
     BeforeAll {
@@ -47,11 +42,11 @@ Describe 'Connect-Instance' {
 
         AfterEach {
             if ( $script:Instance ) {
-                $script:Instance | Disconnect-SmoInstance
+                Disconnect-SmoInstance -Instance $script:Instance
             }
         }
 
-        Context 'SqlClient' -Skip:$script:missingSqlclient {
+        Context 'SqlClient' -Skip:( -Not $Script:PsSqlclient ) {
 
             BeforeAll {
                 $script:Connection = Connect-TSqlInstance -DataSource $script:DataSource
@@ -59,7 +54,7 @@ Describe 'Connect-Instance' {
 
             AfterAll {
                 if ( $script:Connection ) {
-                    $script:Connection | Disconnect-TSqlInstance
+                    Disconnect-TSqlInstance -Connection $script:Connection
                 }
             }
 

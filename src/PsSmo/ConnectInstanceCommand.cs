@@ -14,6 +14,8 @@ namespace PsSmo
     {
         internal static Server Instance { get; set; }
 
+        #region Parameters
+
         [Parameter(
             Mandatory = true,
             ValueFromPipeline = true,
@@ -88,8 +90,11 @@ namespace PsSmo
         [ValidateNotNullOrEmpty()]
         public SecureString Password { get; set; }
 
+        #endregion
+
         protected override void ProcessRecord()
         {
+            base.ProcessRecord();
 
             switch (ParameterSetName)
             {
@@ -168,49 +173,7 @@ namespace PsSmo
                     break;
             }
 
-            Instance.ConnectionContext.InfoMessage += ConnectionContext_InfoMessage;
-            Instance.ConnectionContext.RemoteLoginFailed += ConnectionContext_RemoteLoginFailed;
-            Instance.ConnectionContext.ServerMessage += ConnectionContext_ServerMessage;
-            Instance.ConnectionContext.StateChange += ConnectionContext_StateChange;
-            Instance.ConnectionContext.StatementExecuted += ConnectionContext_StatementExecuted;
-
             WriteObject(Instance);
         }
-
-        private void ConnectionContext_RemoteLoginFailed(object sender, ServerMessageEventArgs e)
-        {
-            WriteWarning(e.ToString());
-        }
-
-        private void ConnectionContext_StatementExecuted(object sender, StatementEventArgs e)
-        {
-            WriteInformation(messageData: e.SqlStatement, tags: new string[] { "SqlStatement" });
-        }
-
-        private void ConnectionContext_StateChange(object sender, System.Data.StateChangeEventArgs e)
-        {
-            WriteVerbose($"Database state changed from {e.OriginalState} to {e.CurrentState}.");
-        }
-
-        private void ConnectionContext_ServerMessage(object sender, ServerMessageEventArgs e)
-        {
-            switch(e.Error.Class)
-            {
-                case 0:
-                    break; // handled in ConnectionContext_InfoMessage
-                default:
-                    WriteWarning($"{e.Error.Class}: {e.Error}");
-                    break;
-            }
-            
-        }
-
-        private void ConnectionContext_InfoMessage(object sender, SqlInfoMessageEventArgs e)
-        {
-            var message = e.Message.Trim();
-            if (message.Length > 0)
-                WriteVerbose(message);
-        }
-
     }
 }

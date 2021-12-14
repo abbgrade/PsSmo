@@ -10,13 +10,9 @@ using Microsoft.SqlServer.Management.Smo;
 namespace PsSmo
 {
     [Cmdlet(VerbsLifecycle.Invoke, "Command")]
-    public class InvokeCommandCommand : PSCmdlet
+    public class InvokeCommandCommand : ClientCommand
     {
-        [Parameter(
-            Mandatory = false
-        )]
-        [Alias("Connection")]
-        public Server Instance { get; set; } = ConnectInstanceCommand.Instance;
+        #region Parameters
 
         [Parameter(
             ParameterSetName = "Text",
@@ -35,6 +31,8 @@ namespace PsSmo
 
         [Parameter()]
         public Hashtable Variables { get; set; } = new Hashtable();
+
+        #endregion
 
         protected override void ProcessRecord()
         {
