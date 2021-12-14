@@ -54,6 +54,12 @@ Describe 'Get-Table' -Skip:( -Not $Script:PsSmoModule ) {
                         $table | Should -Not -BeNullOrEmpty
                         $table.Name | Should -Be 'MyTable'
                     }
+
+                    It 'Returns the table by name' {
+                        $table = Get-SmoTable -Name 'MyTable' -Connection $Script:ManagementConnection
+                        $table | Should -Not -BeNullOrEmpty
+                        $table.Name | Should -Be 'MyTable'
+                    }
                 }
             }
         }
