@@ -19,6 +19,7 @@
     PrivateData = @{
 
         PSData = @{
+            Prerelease = 'beta'
             Category = 'Databases'
             Tags = @('sql', 'sqlserver', 'sqlclient')
             LicenseUri = 'https://github.com/abbgrade/PsSmo/blob/main/LICENSE'
