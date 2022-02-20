@@ -69,6 +69,7 @@ Execute SQLCMD scripts like those created by [DacFX](https://github.com/microsof
 
 - Added Get-Table command.
 - Added output to all commands.
+- Updated to netcoreapp3.1
 
 ## Development
 
