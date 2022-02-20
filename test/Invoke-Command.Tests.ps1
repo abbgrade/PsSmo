@@ -7,7 +7,7 @@ Describe 'Invoke-Command' {
     }
 
     BeforeAll {
-        Import-Module $PSScriptRoot/../src/PsSmo/bin/Debug/netcoreapp2.1/publish/PsSmo.psd1 -Force -ErrorAction Stop
+        Import-Module $PSScriptRoot/../publish/PsSmo/PsSmo.psd1 -Force -ErrorAction Stop
     }
 
     Context 'LocalDb' -Tag LocalDb {

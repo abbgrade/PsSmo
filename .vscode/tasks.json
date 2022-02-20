@@ -40,11 +40,11 @@
     },
     "tasks": [
         {
-            "label": "build",
+            "label": "Build",
             "group": "build",
             "type": "shell",
             "command": "Invoke-Build",
-            "args": ["build"],
+            "args": ["Build"],
             "problemMatcher": "$msCompile",
             "presentation": {
                 "echo": false,
@@ -52,10 +52,10 @@
             }
         },
         {
-            "label": "clean",
+            "label": "Clean",
             "type": "shell",
             "command": "Invoke-Build",
-            "args": ["clean"],
+            "args": ["Clean"],
             "problemMatcher": "$msCompile",
             "presentation": {
                 "echo": false,
@@ -63,7 +63,7 @@
             }
         },
         {
-            "label": "test",
+            "label": "Test",
             "group": "test",
             "type": "shell",
             "command": "Invoke-Pester",
@@ -76,33 +76,13 @@
                 "echo": false,
                 "showReuseMessage": false
             },
-            "dependsOn": "build"
+            "dependsOn": "Build"
         },
         {
-            "label": "install",
+            "label": "Install",
             "type": "shell",
             "command": "Invoke-Build",
-            "args": ["install", "-Configuration", "Release"],
-            "problemMatcher": "$msCompile",
-            "presentation": {
-                "echo": false,
-                "showReuseMessage": false
-            }
-        },
-        {
-            "label": ".",
-            "type": "shell",
-            "command": "Invoke-Build -Task .",
-            "problemMatcher": "$msCompile",
-            "presentation": {
-                "echo": false,
-                "showReuseMessage": false
-            }
-        },
-        {
-            "label": "?",
-            "type": "shell",
-            "command": "Invoke-Build -Task ?",
+            "args": ["Install", "-Configuration", "Release"],
             "problemMatcher": "$msCompile",
             "presentation": {
                 "echo": false,
