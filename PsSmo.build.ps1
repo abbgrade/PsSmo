@@ -29,7 +29,7 @@ param(
 	[int] $BuildNumber
 )
 
-$ModuleName = 'Pssmo'
+$ModuleName = 'PsSmo'
 
 . $PSScriptRoot\tasks\Build.Tasks.ps1
 

@@ -76,7 +76,7 @@
                 "echo": false,
                 "showReuseMessage": false
             },
-            "dependsOn": "build"
+            "dependsOn": "Build"
         },
         {
             "label": "Install",
