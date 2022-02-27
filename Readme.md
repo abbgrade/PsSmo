@@ -79,6 +79,10 @@ Execute SQLCMD scripts like those created by [DacFX](https://github.com/microsof
 - Test automation is based on [Pester](https://pester.dev)
 - Commands are named based on [Approved Verbs for PowerShell Commands](https://docs.microsoft.com/de-de/powershell/scripting/developer/cmdlet/approved-verbs-for-windows-powershell-commands)
 
+### Status
+
+[![.github/workflows/build-validation.yml](https://github.com/abbgrade/PsSmo/actions/workflows/build-validation.yml/badge.svg)](https://github.com/abbgrade/PsSmo/actions/workflows/build-validation.yml)
+
 ### Build
 
 The build scripts require InvokeBuild. If it is not installed, install it with the command `Install-Module InvokeBuild -Scope CurrentUser`.
