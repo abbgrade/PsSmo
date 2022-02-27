@@ -4,7 +4,7 @@ task InstallBuildDependencies -Jobs {
 
 task InstallTestDependencies -Jobs {
     Install-Module PsSqlClient, PsSqlTestServer, psdocker -ErrorAction Stop
-}, Testdata.Create
+}
 
 task InstallReleaseDependencies -Jobs {
 }
