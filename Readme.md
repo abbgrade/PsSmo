@@ -53,6 +53,7 @@ See the [changelog](./CHANGELOG.md) file.
 - Commands are named based on [Approved Verbs for PowerShell Commands](https://docs.microsoft.com/de-de/powershell/scripting/developer/cmdlet/approved-verbs-for-windows-powershell-commands)
 - This project uses [git-flow](https://github.com/nvie/gitflow).
 - This project uses [keep a changelog](https://keepachangelog.com/en/1.0.0/).
+- This project uses [PsBuildTasks](https://github.com/abbgrade/PsBuildTasks).
 
 ### Status
 
@@ -73,9 +74,12 @@ The InvokeBuild test tasks are for CI and do not generate console output.
 
 ### Release
 
-1. Create release branch using gitflow.
-2. Update version number in psd1 file.
-3. Update changelog in this readme file.
-4. Uninstall old versions.
-5. publish release using `Invoke-Build Publish`.
-6. finish release using gitflow.
+1. Create a release branch using git-flow.
+2. Update the version number in the module manifest.
+3. Extend the changelog in this readme.
+4. If you want to create a pre-release.
+   1. Push the release branch to github, to publish the pre-release to PsGallery.
+5. Finish release using git-flow.
+6. Check if tags are not pushed to github.
+7. Check if the release branch is deleted on github.
+8. Create the release on github.
