@@ -42,34 +42,7 @@ Execute SQLCMD scripts like those created by [DacFX](https://github.com/microsof
 
 ## Changelog
 
-### 0.1.0
-
-- Added `Connect-SmoInstance` and `Disconnect-SmoInstance` commands.
-
-### 0.2.0
-
-- Added `Invoke-SmoCommand` with batch support (`GO` statement).
-
-### 0.3.0
-
-- Added `$(Variable)` and `:setvar Variable Value` support.
-
-### 0.4.0
-
-- Added more parameter sets for `Connect-SmoInstance`.
-- Fixed connection exception for Azure SQL.
-
-### 0.5.0
-
-- Added sql command output handler.
-- Fixed variables with quoted values.
-- Added support for line commends in scripts.
-
-### 0.6.0
-
-- Added Get-Table command.
-- Added output to all commands.
-- Updated to netcoreapp3.1
+See the [changelog](./CHANGELOG.md) file.
 
 ## Development
 
@@ -78,6 +51,8 @@ Execute SQLCMD scripts like those created by [DacFX](https://github.com/microsof
 - Build automation is based on [InvokeBuild](https://github.com/nightroman/Invoke-Build)
 - Test automation is based on [Pester](https://pester.dev)
 - Commands are named based on [Approved Verbs for PowerShell Commands](https://docs.microsoft.com/de-de/powershell/scripting/developer/cmdlet/approved-verbs-for-windows-powershell-commands)
+- This project uses [git-flow](https://github.com/nvie/gitflow).
+- This project uses [keep a changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Status
 
