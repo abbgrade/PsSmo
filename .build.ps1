@@ -31,7 +31,7 @@ param(
 
 $ModuleName = 'PsSmo'
 
-. $PSScriptRoot\Tasks\Dependencies.Tasks.ps1
+. $PSScriptRoot\tasks\Dependencies.Tasks.ps1
 . $PSScriptRoot\tasks\Build.Tasks.ps1
 
 # Synopsis: Default task.
