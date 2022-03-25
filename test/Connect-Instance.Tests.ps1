@@ -2,78 +2,50 @@
 
 Describe 'Connect-Instance' {
 
-    BeforeDiscovery {
-        $Script:PsSqlclient = Import-Module PsSqlClient -PassThru
-    }
-
     BeforeAll {
-        Import-Module -Name $PSScriptRoot/../publish/PsSmo/PsSmo.psd1 -Force -ErrorAction 'Stop'
+        Import-Module PsSqlClient -ErrorAction Stop
+        Import-Module PsSqlTestServer -ErrorAction Stop
+        Import-Module $PSScriptRoot/../publish/PsSmo/PsSmo.psd1 -Force -ErrorAction Stop
     }
 
-    Context 'LocalDb' -Tag LocalDb {
+    Context 'TestInstance' {
 
         BeforeAll {
-            $script:missingLocalDb = $true
-            foreach( $version in Get-ChildItem -Path 'Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Microsoft SQL Server Local DB\Installed Versions' | Sort-Object Name -Descending ) {
-                if ( $script:missingLocalDb ) {
-                    switch ( $version.PSChildName ) {
-                        '11.0' {
-                            $script:DataSource = '(localdb)\v11.0'
-                            $script:missingLocalDb = $false
-                            break;
-                        }
-                        '13.0' {
-                            $script:DataSource = '(LocalDb)\MSSQLLocalDB'
-                            $script:missingLocalDb = $false
-                            break;
-                        }
-                        '15.0' {
-                            $script:DataSource = '(LocalDb)\MSSQLLocalDB'
-                            $script:missingLocalDb = $false
-                            break;
-                        }
-                        Default {
-                            Write-Warning "LocalDb version $_ is not implemented."
-                        }
-                    }
-                }
-            }
+            $Script:TestInstance = New-SqlTestInstance -ErrorAction Stop
         }
 
-        AfterEach {
-            if ( $script:Instance ) {
-                Disconnect-SmoInstance -Instance $script:Instance
-            }
+        AfterAll {
+            $Script:TestInstance | Remove-SqlTestInstance
         }
 
-        Context 'SqlClient' -Skip:( -Not $Script:PsSqlclient ) {
+        Context 'Connection' {
 
             BeforeAll {
-                $script:Connection = Connect-TSqlInstance -DataSource $script:DataSource
+                $Script:Connection = $Script:TestInstance | Connect-TSqlInstance
             }
 
             AfterAll {
-                if ( $script:Connection ) {
-                    Disconnect-TSqlInstance -Connection $script:Connection
+                if ( $Script:Connection ) {
+                    Disconnect-TSqlInstance -ErrorAction Continue
                 }
             }
 
             It 'Returns a connection' {
-                $script:Instance = $script:Connection | Connect-SmoInstance
+                $instance = $script:Connection | Connect-SmoInstance
 
-                $script:Instance | Should -Not -BeNullOrEmpty
-                $script:Instance.Refresh()
-                $script:Instance.Edition | Should -Not -BeNullOrEmpty
-                $script:Instance.ConnectionContext.IsOpen | Should -be $true
+                $instance | Should -Not -BeNullOrEmpty
+                $instance.Refresh()
+                $instance.Edition | Should -Not -BeNullOrEmpty
+                $instance.ConnectionContext.IsOpen | Should -be $true
             }
 
             It 'Returns a connection by property' {
-                $script:Instance = Connect-SmoInstance -Connection $script:Connection
+                $instance = Connect-SmoInstance -Connection $script:Connection
 
-                $script:Instance | Should -Not -BeNullOrEmpty
-                $script:Instance.Refresh()
-                $script:Instance.Edition | Should -Not -BeNullOrEmpty
-                $script:Instance.ConnectionContext.IsOpen | Should -be $true
+                $instance | Should -Not -BeNullOrEmpty
+                $instance.Refresh()
+                $instance.Edition | Should -Not -BeNullOrEmpty
+                $instance.ConnectionContext.IsOpen | Should -be $true
             }
         }
     }
