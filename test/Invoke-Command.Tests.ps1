@@ -3,7 +3,7 @@
 Describe 'Invoke-Command' {
 
     BeforeDiscovery {
-        $Script:PsSqlClient = Import-Module PsSqlClient -PassThru -ErrorAction SilentlyContinue
+        $Script:PsSqlClient = Import-Module PsSqlClient -MaximumVersion '0.4.0' -PassThru -ErrorAction SilentlyContinue
     }
 
     BeforeAll {
@@ -54,7 +54,7 @@ Describe 'Invoke-Command' {
 
             Context 'SmoInstance' {
                 BeforeAll {
-                    $script:Instance = $script:Connection | Connect-SmoInstance
+                    $script:Instance = $script:Connection | Connect-SmoInstance -ErrorAction Stop
                 }
 
                 AfterAll {

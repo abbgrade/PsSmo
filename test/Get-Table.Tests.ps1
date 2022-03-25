@@ -3,7 +3,7 @@
 Describe 'Get-Table' {
 
     BeforeDiscovery {
-        $Script:PsSqlClient = Import-Module PsSqlClient -PassThru -ErrorAction SilentlyContinue
+        $Script:PsSqlClient = Import-Module PsSqlClient -MaximumVersion '0.4.0' -PassThru -ErrorAction SilentlyContinue
     }
 
     BeforeAll {
