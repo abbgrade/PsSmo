@@ -55,3 +55,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Added `Connect-SmoInstance` and `Disconnect-SmoInstance` commands.
+
+<!-- markdownlint-configure-file {"MD024": { "siblings_only": true } } -->
