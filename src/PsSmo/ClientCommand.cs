@@ -1,6 +1,6 @@
 ﻿using Microsoft.SqlServer.Management.Common;
 using Microsoft.SqlServer.Management.Smo;
-using System.Data.SqlClient;
+using Microsoft.Data.SqlClient;
 using System.Management.Automation;
 
 namespace PsSmo
