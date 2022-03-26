@@ -57,7 +57,7 @@ See the [changelog](./CHANGELOG.md) file.
 
 ### Status
 
-[![.github/workflows/build-validation.yml](https://github.com/abbgrade/PsSmo/actions/workflows/build-validation.yml/badge.svg)](https://github.com/abbgrade/PsSmo/actions/workflows/build-validation.yml)
+[![.github/workflows/build-validation.yml](https://github.com/abbgrade/PsSmo/actions/workflows/build-validation.yml/badge.svg?branch=develop)](https://github.com/abbgrade/PsSmo/actions/workflows/build-validation.yml)
 
 ### Build
 
