@@ -2,7 +2,7 @@
 using Microsoft.SqlServer.Management.Smo;
 using Microsoft.SqlServer.Management.Common;
 using System.Management.Automation;
-using System.Data.SqlClient;
+using Microsoft.Data.SqlClient;
 using Microsoft.Azure.Services.AppAuthentication;
 using System.Security;
 

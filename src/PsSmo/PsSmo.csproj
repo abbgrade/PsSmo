@@ -7,9 +7,9 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Azure.Services.AppAuthentication" Version="1.6.0" />
-    <PackageReference Include="Microsoft.SqlServer.SqlManagementObjects" Version="150.18208.0" />
-    <PackageReference Include="PowerShellStandard.Library" Version="7.0.0-preview.1" />
-    <PackageReference Include="System.Data.SqlClient" Version="4.8.2" />
+    <PackageReference Include="Microsoft.SqlServer.SqlManagementObjects" Version="161.47008.0" />
+    <PackageReference Include="System.Management.Automation" Version="7.0.8" />
+    <PackageReference Include="Microsoft.Data.SqlClient" Version="4.1.0" />
   </ItemGroup>
 
   <ItemGroup>
