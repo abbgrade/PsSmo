@@ -38,7 +38,7 @@ Describe 'Get-Table' {
 
             Context 'SmoInstance' {
                 BeforeAll {
-                    $Script:SmoConnection = Connect-SmoInstance -Connection $Script:SqlDatabaseConnection -ErrorAction Stop
+                    $Script:SmoConnection = $Script:SqlDatabaseConnection | Connect-SmoInstance -ErrorAction Stop
                 }
 
                 AfterAll {
