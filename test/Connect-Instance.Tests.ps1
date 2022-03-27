@@ -8,44 +8,43 @@ Describe 'Connect-Instance' {
         Import-Module $PSScriptRoot/../publish/PsSmo/PsSmo.psd1 -Force -ErrorAction Stop
     }
 
-    Context 'TestInstance' {
+    Context 'SqlInstance' {
 
         BeforeAll {
-            $Script:TestInstance = New-SqlTestInstance -ErrorAction Stop
+            $Script:SqlInstance = New-SqlTestInstance -ErrorAction Stop
+            $Script:SqlInstanceConnection = $Script:SqlInstance | Connect-TSqlInstance
         }
 
         AfterAll {
-            $Script:TestInstance | Remove-SqlTestInstance
+            if ( $Script:SqlInstance ) {
+                $Script:SqlInstance | Remove-SqlTestInstance
+            }
+            if ( $Script:SqlInstanceConnection ) {
+                Disconnect-TSqlInstance -Connection $Script:SqlInstanceConnection -ErrorAction Continue
+            }
         }
 
-        Context 'Connection' {
+        It 'Returns a connection by pipeline input' {
+            $Script:SmoConnection = $Script:SqlInstanceConnection | Connect-SmoInstance
 
-            BeforeAll {
-                $Script:Connection = $Script:TestInstance | Connect-TSqlInstance
-            }
+            $Script:SmoConnection | Should -Not -BeNullOrEmpty
+            $Script:SmoConnection.Refresh()
+            $Script:SmoConnection.Edition | Should -Not -BeNullOrEmpty
+            $Script:SmoConnection.ConnectionContext.IsOpen | Should -be $true
+        }
 
-            AfterAll {
-                if ( $Script:Connection ) {
-                    Disconnect-TSqlInstance -ErrorAction Continue
-                }
-            }
+        It 'Returns a connection by property' {
+            $Script:SmoConnection = Connect-SmoInstance -Connection $Script:SqlInstanceConnection
 
-            It 'Returns a connection' {
-                $instance = $script:Connection | Connect-SmoInstance
+            $Script:SmoConnection | Should -Not -BeNullOrEmpty
+            $Script:SmoConnection.Refresh()
+            $Script:SmoConnection.Edition | Should -Not -BeNullOrEmpty
+            $Script:SmoConnection.ConnectionContext.IsOpen | Should -be $true
+        }
 
-                $instance | Should -Not -BeNullOrEmpty
-                $instance.Refresh()
-                $instance.Edition | Should -Not -BeNullOrEmpty
-                $instance.ConnectionContext.IsOpen | Should -be $true
-            }
-
-            It 'Returns a connection by property' {
-                $instance = Connect-SmoInstance -Connection $script:Connection
-
-                $instance | Should -Not -BeNullOrEmpty
-                $instance.Refresh()
-                $instance.Edition | Should -Not -BeNullOrEmpty
-                $instance.ConnectionContext.IsOpen | Should -be $true
+        AfterEach {
+            if ( $Script:SmoConnection ) {
+                Disconnect-SmoInstance -Instance $Script:SmoConnection
             }
         }
     }

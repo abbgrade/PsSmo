@@ -8,75 +8,71 @@ Describe 'Invoke-Command' {
         Import-Module $PSScriptRoot/../publish/PsSmo/PsSmo.psd1 -Force -ErrorAction Stop
     }
 
-    Context 'TestInstance' {
+    Context 'SqlInstance' {
 
         BeforeAll {
-            $Script:TestInstance = New-SqlTestInstance -ErrorAction Stop
+            $Script:SqlInstance = New-SqlTestInstance -ErrorAction Stop
+            $Script:SqlInstanceConnection = $Script:SqlInstance | Connect-TSqlInstance
         }
 
         AfterAll {
-            $Script:TestInstance | Remove-SqlTestInstance
+            if ( $Script:SqlInstance ) {
+                $Script:SqlInstance | Remove-SqlTestInstance
+            }
+            if ( $Script:SqlInstanceConnection ) {
+                Disconnect-TSqlInstance -Connection $Script:SqlInstanceConnection -ErrorAction Continue
+            }
         }
 
-        Context 'Connection' {
-
+        Context 'SmoInstance' {
             BeforeAll {
-                $Script:Connection = $Script:TestInstance | Connect-TSqlInstance
+                $Script:SmoConnection = $Script:SqlInstanceConnection | Connect-SmoInstance -ErrorAction Stop
             }
 
             AfterAll {
-                if ( $Script:Connection ) {
-                    Disconnect-TSqlInstance -ErrorAction Continue
+                if ( $Script:SmoConnection ) {
+                    Disconnect-SmoInstance -Instance $Script:SmoConnection
                 }
             }
 
-            Context 'SmoInstance' {
-                BeforeAll {
-                    $script:Instance = $script:Connection | Connect-SmoInstance -ErrorAction Stop
-                }
+            It 'throws on error' {
+                {
+                    Invoke-SmoCommand -Command 'SELECT 1/0'
+                } | Should -Throw
+            }
 
-                AfterAll {
-                    Disconnect-SmoInstance -Instance $script:Instance
-                }
+            Context 'SQLCMD' {
 
-                It 'throws on error' {
-                    {
-                        Invoke-SmoCommand -Command 'SELECT 1/0'
-                    } | Should -Throw
-                }
-
-                Context 'SQLCMD' {
-
-                    It 'works with separator' {
-                        Invoke-SmoCommand -Command @'
+                It 'works with separator' {
+                    Invoke-SmoCommand -Command @'
 PRINT 'foo'
 GO
 
 PRINT 'bar'
 GO
 '@
-                    }
+                }
 
-                    It 'throws with undefined variables' {
-                        {
-                            Invoke-SmoCommand -Command 'PRINT ''$(foo)'''
-                        } | Should -Throw
-                    }
+                It 'throws with undefined variables' {
+                    {
+                        Invoke-SmoCommand -Command 'PRINT ''$(foo)'''
+                    } | Should -Throw
+                }
 
-                    It 'works with defined variables' {
-                        Invoke-SmoCommand -Command 'PRINT ''$(foo)''' -Variables @{ foo = 'bar' } -Verbose
-                    }
+                It 'works with defined variables' {
+                    Invoke-SmoCommand -Command 'PRINT ''$(foo)''' -Variables @{ foo = 'bar' } -Verbose
+                }
 
-                    It 'works with :on error' {
-                        Invoke-SmoCommand -Command @'
+                It 'works with :on error' {
+                    Invoke-SmoCommand -Command @'
 GO
 :on error exit
 GO
 '@
-                    }
+                }
 
-                    It 'works with :setvar' {
-                        Invoke-SmoCommand -Command @'
+                It 'works with :setvar' {
+                    Invoke-SmoCommand -Command @'
 :setvar __IsSqlCmdEnabled "True"
 GO
 IF N'$(__IsSqlCmdEnabled)' NOT LIKE N'True'
@@ -85,23 +81,22 @@ IF N'$(__IsSqlCmdEnabled)' NOT LIKE N'True'
         SET NOEXEC ON;
     END
 '@
-                    }
+                }
 
-                    It 'ignores line comments' {
-                        Invoke-SmoCommand -Command @'
+                It 'ignores line comments' {
+                    Invoke-SmoCommand -Command @'
 -- :setvar foo $(foo)
 PRINT '$(foo)'
 '@ -Variables @{ foo = 'bar' }
-                    }
+                }
 
-                    It 'ignores block comments' {
-                        Invoke-SmoCommand -Command @'
+                It 'ignores block comments' {
+                    Invoke-SmoCommand -Command @'
 /*
 :setvar foo $(foo)
 */
 PRINT '$(foo)'
 '@ -Variables @{ foo = 'bar' }
-                    }
                 }
             }
         }
