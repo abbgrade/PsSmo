@@ -26,23 +26,27 @@ Describe 'Get-Table' {
 
             AfterAll {
                 if ( $Script:ServerConnection ) {
-                    Disconnect-TSqlInstance -ErrorAction Continue
+                    Disconnect-TSqlInstance -Connection $Script:ServerConnection -ErrorAction Continue
                 }
             }
 
             Context 'TestDatabase' {
 
                 BeforeAll {
-                    [string] $Script:DatabaseName = ( [string](New-Guid) ).Substring(0, 8)
-                    Invoke-TSqlCommand "CREATE DATABASE [$Script:DatabaseName]" -Connection $script:ServerConnection -ErrorAction Stop
-                    $Script:TestConnection = Connect-TSqlInstance -DataSource $Script:ServerConnection.DataSource -InitialCatalog $Script:DatabaseName
+                    # [string] $Script:DatabaseName = ( [string](New-Guid) ).Substring(0, 8)
+                    # Invoke-TSqlCommand "CREATE DATABASE [$Script:DatabaseName]" -Connection $script:ServerConnection -ErrorAction Stop
+                    $Script:Database = New-SqlTestDatabase -Instance $Script:TestInstance -InstanceConnection $Script:ServerConnection -ErrorAction Stop
+                    $Script:TestConnection = $Script:Database | Connect-TSqlInstance # -DataSource $Script:ServerConnection.DataSource -InitialCatalog $Script:DatabaseName
                 }
 
                 AfterAll {
-                    Invoke-TSqlCommand 'USE [master];' -Connection $Script:ServerConnection
-                    Disconnect-TSqlInstance -Connection $Script:ServerConnection
-                    Invoke-TSqlCommand "ALTER DATABASE [$Script:DatabaseName] SET SINGLE_USER WITH ROLLBACK IMMEDIATE" -Connection $script:ServerConnection
-                    Invoke-TSqlCommand "DROP DATABASE [$Script:DatabaseName]" -Connection $script:ServerConnection
+                    Disconnect-TSqlInstance -Connection $Script:TestConnection
+                    $Script:Database | Remove-SqlTestDatabase
+
+                    # Invoke-TSqlCommand 'USE [master];' -Connection $Script:ServerConnection
+                    # Disconnect-TSqlInstance -Connection $Script:ServerConnection
+                    # Invoke-TSqlCommand "ALTER DATABASE [$Script:DatabaseName] SET SINGLE_USER WITH ROLLBACK IMMEDIATE" -Connection $script:ServerConnection
+                    # Invoke-TSqlCommand "DROP DATABASE [$Script:DatabaseName]" -Connection $script:ServerConnection
                 }
 
                 Context 'SmoInstance' {
