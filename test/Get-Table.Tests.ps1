@@ -8,77 +8,64 @@ Describe 'Get-Table' {
         Import-Module $PSScriptRoot/../publish/PsSmo/PsSmo.psd1 -Force -ErrorAction Stop
     }
 
-    Context 'TestInstance' {
+    Context 'SqlInstance' {
 
         BeforeAll {
-            $Script:TestInstance = New-SqlTestInstance -ErrorAction Stop
+            $Script:SqlInstance = New-SqlTestInstance -ErrorAction Stop
+            $Script:SqlInstanceConnection = $Script:SqlInstance | Connect-TSqlInstance
         }
 
         AfterAll {
-            $Script:TestInstance | Remove-SqlTestInstance
+            if ( $Script:SqlInstance ) {
+                $Script:SqlInstance | Remove-SqlTestInstance
+            }
+            if ( $Script:SqlInstanceConnection ) {
+                Disconnect-TSqlInstance -Connection $Script:SqlInstanceConnection -ErrorAction Continue
+            }
         }
 
-        Context 'ServerConnection' {
+        Context 'SqlDatabase' {
 
             BeforeAll {
-                $Script:ServerConnection = $Script:TestInstance | Connect-TSqlInstance
+                $Script:SqlDatabase = New-SqlTestDatabase -Instance $Script:SqlInstance -InstanceConnection $Script:SqlInstanceConnection -ErrorAction Stop
+                $Script:SqlDatabaseConnection = $Script:SqlDatabase | Connect-TSqlInstance
             }
 
             AfterAll {
-                if ( $Script:ServerConnection ) {
-                    Disconnect-TSqlInstance -Connection $Script:ServerConnection -ErrorAction Continue
-                }
+                Disconnect-TSqlInstance -Connection $Script:SqlDatabaseConnection
+                $Script:SqlDatabase | Remove-SqlTestDatabase
             }
 
-            Context 'TestDatabase' {
-
+            Context 'SmoInstance' {
                 BeforeAll {
-                    # [string] $Script:DatabaseName = ( [string](New-Guid) ).Substring(0, 8)
-                    # Invoke-TSqlCommand "CREATE DATABASE [$Script:DatabaseName]" -Connection $script:ServerConnection -ErrorAction Stop
-                    $Script:Database = New-SqlTestDatabase -Instance $Script:TestInstance -InstanceConnection $Script:ServerConnection -ErrorAction Stop
-                    $Script:TestConnection = $Script:Database | Connect-TSqlInstance # -DataSource $Script:ServerConnection.DataSource -InitialCatalog $Script:DatabaseName
+                    $Script:SmoConnection = Connect-SmoInstance -Connection $Script:SqlDatabaseConnection -ErrorAction Stop
                 }
 
                 AfterAll {
-                    Disconnect-TSqlInstance -Connection $Script:TestConnection
-                    $Script:Database | Remove-SqlTestDatabase
-
-                    # Invoke-TSqlCommand 'USE [master];' -Connection $Script:ServerConnection
-                    # Disconnect-TSqlInstance -Connection $Script:ServerConnection
-                    # Invoke-TSqlCommand "ALTER DATABASE [$Script:DatabaseName] SET SINGLE_USER WITH ROLLBACK IMMEDIATE" -Connection $script:ServerConnection
-                    # Invoke-TSqlCommand "DROP DATABASE [$Script:DatabaseName]" -Connection $script:ServerConnection
+                    if ( $Script:SmoConnection ) {
+                        Disconnect-SmoInstance -Instance $Script:SmoConnection
+                    }
                 }
 
-                Context 'SmoInstance' {
+                Context 'Table' {
                     BeforeAll {
-                        $Script:ManagementConnection = Connect-SmoInstance -Connection $Script:TestConnection -ErrorAction Stop
+                        Invoke-TSqlCommand 'CREATE TABLE MyTable ( [Id] INT NOT NULL PRIMARY KEY )' -Connection $Script:SqlDatabaseConnection -ErrorAction Stop
                     }
 
-                    AfterAll {
-                        if ( $Script:ManagementConnection ) {
-                            Disconnect-SmoInstance -Instance $Script:ManagementConnection
-                        }
+                    It 'Returns the table' {
+                        $table = Get-SmoTable -Connection $Script:SmoConnection
+                        $table | Should -Not -BeNullOrEmpty
+                        $table.Name | Should -Be 'MyTable'
                     }
 
-                    Context 'Table' {
-                        BeforeAll {
-                            Invoke-TSqlCommand 'CREATE TABLE MyTable ( [Id] INT NOT NULL PRIMARY KEY )' -Connection $Script:TestConnection -ErrorAction Stop
-                        }
-
-                        It 'Returns the table' {
-                            $table = Get-SmoTable -Connection $Script:ManagementConnection
-                            $table | Should -Not -BeNullOrEmpty
-                            $table.Name | Should -Be 'MyTable'
-                        }
-
-                        It 'Returns the table by name' {
-                            $table = Get-SmoTable -Name 'MyTable' -Connection $Script:ManagementConnection
-                            $table | Should -Not -BeNullOrEmpty
-                            $table.Name | Should -Be 'MyTable'
-                        }
+                    It 'Returns the table by name' {
+                        $table = Get-SmoTable -Name 'MyTable' -Connection $Script:SmoConnection
+                        $table | Should -Not -BeNullOrEmpty
+                        $table.Name | Should -Be 'MyTable'
                     }
                 }
             }
         }
     }
 }
+
