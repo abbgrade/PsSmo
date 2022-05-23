@@ -41,16 +41,24 @@ namespace PsSmo
             switch (ParameterSetName)
             {
                 case "Text":
+                    WriteVerbose("Execute SQL script from text.");
                     break;
 
                 case "File":
+                    WriteVerbose("Execute SQL script from file.");
                     Text = File.ReadAllText(InputFile.FullName);
                     break;
 
                 default:
                     throw new NotImplementedException($"ParameterSetName {ParameterSetName} is not implemented");
             }
-            Instance.ConnectionContext.ExecuteNonQuery(sqlCommand: processSqlCmdText(Text, processVariables(Variables)));
+            try
+            {
+                Instance.ConnectionContext.ExecuteNonQuery(sqlCommand: processSqlCmdText(Text, processVariables(Variables)));
+            } catch (Exception ex)
+            {
+                WriteError(new ErrorRecord(ex, ex.GetType().Name, ErrorCategory.NotSpecified, Text));
+            }
         }
 
         private Dictionary<string, string> processVariables(Hashtable variables)
