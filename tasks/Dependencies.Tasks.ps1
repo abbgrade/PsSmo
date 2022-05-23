@@ -3,10 +3,10 @@ task InstallBuildDependencies -Jobs {
 }
 
 task InstallTestDependencies -Jobs {
-    Install-Module PsSqlTestServer -Scope CurrentUser -AllowPrerelease -Verbose
-    Install-Module psdocker -Scope CurrentUser -AllowPrerelease -Verbose
-    Install-Module PsSqlLocalDb -Scope CurrentUser -AllowPrerelease -Verbose
     Install-Module PsSqlClient -Scope CurrentUser -ErrorAction Stop -AllowPrerelease -AllowClobber -Verbose
+    Install-Module PsSqlLocalDb -Scope CurrentUser -AllowPrerelease -Verbose
+    Install-Module psdocker -Scope CurrentUser -AllowPrerelease -Verbose
+    Install-Module PsSqlTestServer -Scope CurrentUser -AllowPrerelease -Verbose
 }
 
 task InstallReleaseDependencies -Jobs {
