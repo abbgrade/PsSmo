@@ -17,6 +17,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Updated to netcoreapp3.1
 - Updated from System.Data.SqlClient to Microsoft.Data.SqlClient.
 
+### Fixed
+
+- ErrorAction parameter works for `Invoke-Command`.
+
 ## [0.5.0] - 2021-10-15
 
 ### Added
