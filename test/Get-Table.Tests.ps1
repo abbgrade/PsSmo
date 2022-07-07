@@ -1,65 +1,60 @@
-#Requires -Modules @{ ModuleName='Pester'; ModuleVersion='5.0.0' }
+#Requires -Modules @{ ModuleName='Pester'; ModuleVersion='5.0.0' }, @{ ModuleName='PsSqlTestServer'; ModuleVersion='1.2.0' }
 
-Describe 'Get-Table' {
+Describe Get-Table {
 
     BeforeAll {
-        Import-Module PsSqlClient -ErrorAction Stop
-        Import-Module PsSqlTestServer -ErrorAction Stop
         Import-Module $PSScriptRoot/../publish/PsSmo/PsSmo.psd1 -Force -ErrorAction Stop
     }
 
-    Context 'SqlInstance' {
+    Context SqlInstance {
 
         BeforeAll {
-            $Script:SqlInstance = New-SqlTestInstance -ErrorAction Stop
-            $Script:SqlInstanceConnection = $Script:SqlInstance | Connect-TSqlInstance
+            $SqlInstance = New-SqlTestInstance -ErrorAction Stop
+            $SqlInstanceConnection = $SqlInstance | Connect-TSqlInstance
         }
 
         AfterAll {
-            if ( $Script:SqlInstance ) {
-                $Script:SqlInstance | Remove-SqlTestInstance
-            }
-            if ( $Script:SqlInstanceConnection ) {
-                Disconnect-TSqlInstance -Connection $Script:SqlInstanceConnection -ErrorAction Continue
+            if ( $SqlInstance ) {
+                $SqlInstance | Remove-SqlTestInstance
             }
         }
 
-        Context 'SqlDatabase' {
+        Context SqlDatabase {
 
             BeforeAll {
-                $Script:SqlDatabase = New-SqlTestDatabase -Instance $Script:SqlInstance -InstanceConnection $Script:SqlInstanceConnection -ErrorAction Stop
-                $Script:SqlDatabaseConnection = $Script:SqlDatabase | Connect-TSqlInstance
+                $SqlDatabase = New-SqlTestDatabase -Instance $SqlInstance -InstanceConnection $SqlInstanceConnection -ErrorAction Stop
+                $SqlDatabaseConnection = $SqlDatabase | Connect-TSqlInstance
             }
 
             AfterAll {
-                Disconnect-TSqlInstance -Connection $Script:SqlDatabaseConnection
-                $Script:SqlDatabase | Remove-SqlTestDatabase
+                Disconnect-TSqlInstance -Connection $SqlDatabaseConnection
+                $SqlDatabase | Remove-SqlTestDatabase
             }
 
-            Context 'SmoInstance' {
+            Context SmoInstance {
                 BeforeAll {
-                    $Script:SmoConnection = $Script:SqlDatabaseConnection | Connect-SmoInstance -ErrorAction Stop
+                    $SmoConnection = $SqlDatabaseConnection | Connect-SmoInstance -ErrorAction Stop
                 }
 
                 AfterAll {
-                    if ( $Script:SmoConnection ) {
-                        Disconnect-SmoInstance -Instance $Script:SmoConnection
+                    if ( $SmoConnection ) {
+                        Disconnect-SmoInstance -Instance $SmoConnection
                     }
                 }
 
-                Context 'Table' {
+                Context Table {
                     BeforeAll {
-                        Invoke-TSqlCommand 'CREATE TABLE MyTable ( [Id] INT NOT NULL PRIMARY KEY )' -Connection $Script:SqlDatabaseConnection -ErrorAction Stop
+                        Invoke-TSqlCommand 'CREATE TABLE MyTable ( [Id] INT NOT NULL PRIMARY KEY )' -Connection $SqlDatabaseConnection -ErrorAction Stop
                     }
 
                     It 'Returns the table' {
-                        $table = Get-SmoTable -Connection $Script:SmoConnection
+                        $table = Get-SmoTable -Connection $SmoConnection
                         $table | Should -Not -BeNullOrEmpty
                         $table.Name | Should -Be 'MyTable'
                     }
 
                     It 'Returns the table by name' {
-                        $table = Get-SmoTable -Name 'MyTable' -Connection $Script:SmoConnection
+                        $table = Get-SmoTable -Name 'MyTable' -Connection $SmoConnection
                         $table | Should -Not -BeNullOrEmpty
                         $table.Name | Should -Be 'MyTable'
                     }
