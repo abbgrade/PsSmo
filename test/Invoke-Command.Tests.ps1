@@ -1,14 +1,12 @@
-#Requires -Modules @{ ModuleName='Pester'; ModuleVersion='5.0.0' }
+#Requires -Modules @{ ModuleName='Pester'; ModuleVersion='5.0.0' }, @{ ModuleName='PsSqlTestServer'; ModuleVersion='1.2.0' }
 
-Describe 'Invoke-Command' {
+Describe Invoke-Command {
 
     BeforeAll {
-        Import-Module PsSqlClient -ErrorAction Stop
-        Import-Module PsSqlTestServer -ErrorAction Stop
         Import-Module $PSScriptRoot/../publish/PsSmo/PsSmo.psd1 -Force -ErrorAction Stop
     }
 
-    Context 'SqlInstance' {
+    Context SqlInstance {
 
         BeforeAll {
             $Script:SqlInstance = New-SqlTestInstance -ErrorAction Stop
@@ -24,7 +22,7 @@ Describe 'Invoke-Command' {
             }
         }
 
-        Context 'SmoInstance' {
+        Context SmoInstance {
             BeforeAll {
                 $Script:SmoConnection = $Script:SqlInstanceConnection | Connect-SmoInstance -ErrorAction Stop
             }
@@ -37,7 +35,7 @@ Describe 'Invoke-Command' {
 
             It 'throws on error' {
                 {
-                    Invoke-SmoCommand -Command 'SELECT 1/0'
+                    Invoke-SmoCommand -Command 'SELECT 1/0' -ErrorAction Stop
                 } | Should -Throw
             }
 
@@ -55,7 +53,7 @@ GO
 
                 It 'throws with undefined variables' {
                     {
-                        Invoke-SmoCommand -Command 'PRINT ''$(foo)'''
+                        Invoke-SmoCommand -Command 'PRINT ''$(foo)''' -ErrorAction Stop
                     } | Should -Throw
                 }
 
