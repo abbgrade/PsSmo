@@ -10,13 +10,9 @@ using Microsoft.SqlServer.Management.Smo;
 namespace PsSmo
 {
     [Cmdlet(VerbsLifecycle.Invoke, "Command")]
-    public class InvokeCommandCommand : PSCmdlet
+    public class InvokeCommandCommand : ClientCommand
     {
-        [Parameter(
-            Mandatory = false
-        )]
-        [Alias("Connection")]
-        public Server Instance { get; set; } = ConnectInstanceCommand.Instance;
+        #region Parameters
 
         [Parameter(
             ParameterSetName = "Text",
@@ -36,6 +32,8 @@ namespace PsSmo
         [Parameter()]
         public Hashtable Variables { get; set; } = new Hashtable();
 
+        #endregion
+
         protected override void ProcessRecord()
         {
             base.ProcessRecord();
@@ -43,16 +41,24 @@ namespace PsSmo
             switch (ParameterSetName)
             {
                 case "Text":
+                    WriteVerbose("Execute SQL script from text.");
                     break;
 
                 case "File":
+                    WriteVerbose("Execute SQL script from file.");
                     Text = File.ReadAllText(InputFile.FullName);
                     break;
 
                 default:
                     throw new NotImplementedException($"ParameterSetName {ParameterSetName} is not implemented");
             }
-            Instance.ConnectionContext.ExecuteNonQuery(sqlCommand: processSqlCmdText(Text, processVariables(Variables)));
+            try
+            {
+                Instance.ConnectionContext.ExecuteNonQuery(sqlCommand: processSqlCmdText(Text, processVariables(Variables)));
+            } catch (Exception ex)
+            {
+                WriteError(new ErrorRecord(ex, ex.GetType().Name, ErrorCategory.NotSpecified, Text));
+            }
         }
 
         private Dictionary<string, string> processVariables(Hashtable variables)

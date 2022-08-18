@@ -1,84 +1,48 @@
-#Requires -Modules @{ ModuleName='Pester'; ModuleVersion='5.0.0' }
+#Requires -Modules @{ ModuleName='Pester'; ModuleVersion='5.0.0' }, @{ ModuleName='PsSqlTestServer'; ModuleVersion='1.2.0' }
 
-Describe 'Connect-Instance' {
-
-    BeforeDiscovery {
-        $script:missingSqlclient = $true
-        $local:psSqlclient = Get-Module -ListAvailable -Name PsSqlClient
-        if ( $local:psSqlclient ) {
-            Import-Module PsSqlClient
-            $script:missingSqlclient = $false
-        }
-    }
+Describe Connect-Instance {
 
     BeforeAll {
-        Import-Module -Name $PSScriptRoot/../src/PsSmo/bin/Debug/netcoreapp2.1/publish/PsSmo.psd1 -Force -ErrorAction 'Stop'
+        Import-Module $PSScriptRoot/../publish/PsSmo/PsSmo.psd1 -Force -ErrorAction Stop
     }
 
-    Context 'LocalDb' -Tag LocalDb {
+    Context SqlInstance {
 
         BeforeAll {
-            $script:missingLocalDb = $true
-            foreach( $version in Get-ChildItem -Path 'Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Microsoft SQL Server Local DB\Installed Versions' | Sort-Object Name -Descending ) {
-                if ( $script:missingLocalDb ) {
-                    switch ( $version.PSChildName ) {
-                        '11.0' {
-                            $script:DataSource = '(localdb)\v11.0'
-                            $script:missingLocalDb = $false
-                            break;
-                        }
-                        '13.0' {
-                            $script:DataSource = '(LocalDb)\MSSQLLocalDB'
-                            $script:missingLocalDb = $false
-                            break;
-                        }
-                        '15.0' {
-                            $script:DataSource = '(LocalDb)\MSSQLLocalDB'
-                            $script:missingLocalDb = $false
-                            break;
-                        }
-                        Default {
-                            Write-Warning "LocalDb version $_ is not implemented."
-                        }
-                    }
-                }
+            $SqlInstance = New-SqlTestInstance -ErrorAction Stop
+            $SqlInstanceConnection = $SqlInstance | Connect-TSqlInstance
+        }
+
+        AfterAll {
+            if ( $SqlInstance ) {
+                $SqlInstance | Remove-SqlTestInstance
             }
+            if ( $SqlInstanceConnection ) {
+                Disconnect-TSqlInstance -Connection $SqlInstanceConnection -ErrorAction Continue
+            }
+        }
+
+        It 'Returns a connection by pipeline input' {
+            $SmoConnection = $SqlInstanceConnection | Connect-SmoInstance
+
+            $SmoConnection | Should -Not -BeNullOrEmpty
+            $SmoConnection.Refresh()
+            $SmoConnection.Edition | Should -Not -BeNullOrEmpty
+            $SmoConnection.ConnectionContext.IsOpen | Should -be $true
+        }
+
+        It 'Returns a connection by property' {
+            $SmoConnection = Connect-SmoInstance -Connection $SqlInstanceConnection
+
+            $SmoConnection | Should -Not -BeNullOrEmpty
+            $SmoConnection.Refresh()
+            $SmoConnection.Edition | Should -Not -BeNullOrEmpty
+            $SmoConnection.ConnectionContext.IsOpen | Should -be $true
         }
 
         AfterEach {
-            if ( $script:Instance ) {
-                $script:Instance | Disconnect-SmoInstance
-            }
-        }
-
-        Context 'SqlClient' -Skip:$script:missingSqlclient {
-
-            BeforeAll {
-                $script:Connection = Connect-TSqlInstance -DataSource $script:DataSource
-            }
-
-            AfterAll {
-                if ( $script:Connection ) {
-                    $script:Connection | Disconnect-TSqlInstance
-                }
-            }
-
-            It 'Returns a connection' {
-                $script:Instance = $script:Connection | Connect-SmoInstance
-
-                $script:Instance | Should -Not -BeNullOrEmpty
-                $script:Instance.Refresh()
-                $script:Instance.Edition | Should -Not -BeNullOrEmpty
-                $script:Instance.ConnectionContext.IsOpen | Should -be $true
-            }
-
-            It 'Returns a connection by property' {
-                $script:Instance = Connect-SmoInstance -Connection $script:Connection
-
-                $script:Instance | Should -Not -BeNullOrEmpty
-                $script:Instance.Refresh()
-                $script:Instance.Edition | Should -Not -BeNullOrEmpty
-                $script:Instance.ConnectionContext.IsOpen | Should -be $true
+            if ( $SmoConnection ) {
+                Disconnect-SmoInstance -Instance $SmoConnection
             }
         }
     }
