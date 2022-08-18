@@ -20,6 +20,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Updated from System.Data.SqlClient to Microsoft.Data.SqlClient.
 - Updated from PowerShellStandard.Library to System.Management.Automation
 - Updated Microsoft.SqlServer.SqlManagementObjects
+- Added pipeline input for `Disconnect-Instance`
 
 ### Fixed
 
