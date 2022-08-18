@@ -8,10 +8,17 @@ using System.Security;
 
 namespace PsSmo
 {
-    [Cmdlet(VerbsCommunications.Connect, "Instance")]
+    [Cmdlet(VerbsCommunications.Connect, "Instance", DefaultParameterSetName = PARAMETERSET_PROPERTIES_INTEGRATED)]
     [OutputType(typeof(Server))]
     public class ConnectInstanceCommand : PSCmdlet
     {
+        #region ParameterSets
+        private const string PARAMETERSET_CONNECTION_STRING     = "ConnectionString";
+        private const string PARAMETERSET_PROPERTIES_INTEGRATED = "Properties_IntegratedSecurity";
+        private const string PARAMETERSET_PROPERTIES_CREDENTIAL = "Properties_Credential";
+        private const string PARAMETERSET_SQL_CLIENT            = "SqlClient";
+        #endregion
+
         internal static Server Instance { get; set; }
 
         #region Parameters
@@ -19,12 +26,12 @@ namespace PsSmo
         [Parameter(
             Mandatory = true,
             ValueFromPipeline = true,
-            ParameterSetName = "SqlClient"
+            ParameterSetName = PARAMETERSET_SQL_CLIENT
         )]
         public SqlConnection Connection { get; set; }
 
         [Parameter(
-            ParameterSetName = "ConnectionString",
+            ParameterSetName = PARAMETERSET_CONNECTION_STRING,
             Position = 0,
             Mandatory = true,
             ValueFromPipeline = true,
@@ -34,13 +41,13 @@ namespace PsSmo
         public string ConnectionString { get; set; }
 
         [Parameter(
-            ParameterSetName = "Properties_IntegratedSecurity",
+            ParameterSetName = PARAMETERSET_PROPERTIES_INTEGRATED,
             Position = 0,
             Mandatory = true,
             ValueFromPipelineByPropertyName = true
         )]
         [Parameter(
-            ParameterSetName = "Properties_SQLServerAuthentication",
+            ParameterSetName = PARAMETERSET_PROPERTIES_CREDENTIAL,
             Position = 0,
             Mandatory = true,
             ValueFromPipelineByPropertyName = true
@@ -50,13 +57,13 @@ namespace PsSmo
         public string DataSource { get; set; }
 
         [Parameter(
-            ParameterSetName = "Properties_IntegratedSecurity",
+            ParameterSetName = PARAMETERSET_PROPERTIES_INTEGRATED,
             Position = 1,
             Mandatory = false,
             ValueFromPipelineByPropertyName = true
         )]
         [Parameter(
-            ParameterSetName = "Properties_SQLServerAuthentication",
+            ParameterSetName = PARAMETERSET_PROPERTIES_CREDENTIAL,
             Position = 1,
             Mandatory = false,
             ValueFromPipelineByPropertyName = true
@@ -66,14 +73,14 @@ namespace PsSmo
         public string InitialCatalog { get; set; }
 
         [Parameter(
-            ParameterSetName = "Properties_IntegratedSecurity",
+            ParameterSetName = PARAMETERSET_PROPERTIES_INTEGRATED,
             ValueFromPipelineByPropertyName = true
         )]
         [ValidateNotNullOrEmpty()]
         public string AccessToken { get; set; }
 
         [Parameter(
-            ParameterSetName = "Properties_SQLServerAuthentication",
+            ParameterSetName = PARAMETERSET_PROPERTIES_CREDENTIAL,
             Position = 1,
             Mandatory = true,
             ValueFromPipeline = true,
@@ -82,7 +89,7 @@ namespace PsSmo
         public string UserId { get; set; }
 
         [Parameter(
-            ParameterSetName = "Properties_SQLServerAuthentication",
+            ParameterSetName = PARAMETERSET_PROPERTIES_CREDENTIAL,
             Position = 1,
             Mandatory = true,
             ValueFromPipeline = true,
@@ -98,7 +105,7 @@ namespace PsSmo
 
             switch (ParameterSetName)
             {
-                case "SqlClient":
+                case PARAMETERSET_SQL_CLIENT:
                     WriteVerbose("Connect by existing connection");
                     Instance = new Server(
                         serverConnection: new ServerConnection(
@@ -107,7 +114,7 @@ namespace PsSmo
                     );
                     break;
 
-                    case "ConnectionString":
+                    case PARAMETERSET_CONNECTION_STRING:
                     {
                         WriteVerbose("Connect by connection string");
                         SqlConnectionStringBuilder builder = new SqlConnectionStringBuilder();
@@ -121,7 +128,7 @@ namespace PsSmo
                         break;
                     }
 
-                    case "Properties_IntegratedSecurity":
+                    case PARAMETERSET_PROPERTIES_INTEGRATED:
                     {
                         WriteVerbose("Connect by Integrated Security");
                         SqlConnectionStringBuilder builder = new SqlConnectionStringBuilder();
@@ -148,7 +155,7 @@ namespace PsSmo
                         break;
                     }
 
-                    case "Properties_SQLServerAuthentication":
+                    case PARAMETERSET_PROPERTIES_CREDENTIAL:
                     {
                         WriteVerbose("Connect by SQL Server Authentication");
                         SqlConnectionStringBuilder builder = new SqlConnectionStringBuilder();
