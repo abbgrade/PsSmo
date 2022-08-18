@@ -12,6 +12,12 @@ schema: 2.0.0
 
 ## SYNTAX
 
+### Properties_IntegratedSecurity (Default)
+```
+Connect-SmoInstance [-DataSource] <String> [[-InitialCatalog] <String>] [-AccessToken <String>]
+ [<CommonParameters>]
+```
+
 ### SqlClient
 ```
 Connect-SmoInstance -Connection <SqlConnection> [<CommonParameters>]
@@ -22,13 +28,7 @@ Connect-SmoInstance -Connection <SqlConnection> [<CommonParameters>]
 Connect-SmoInstance [-ConnectionString] <String> [<CommonParameters>]
 ```
 
-### Properties_IntegratedSecurity
-```
-Connect-SmoInstance [-DataSource] <String> [[-InitialCatalog] <String>] [-AccessToken <String>]
- [<CommonParameters>]
-```
-
-### Properties_SQLServerAuthentication
+### Properties_Credential
 ```
 Connect-SmoInstance [-DataSource] <String> [[-InitialCatalog] <String>] [-UserId] <String>
  [-Password] <SecureString> [<CommonParameters>]
@@ -98,7 +98,7 @@ Accept wildcard characters: False
 
 ```yaml
 Type: String
-Parameter Sets: Properties_IntegratedSecurity, Properties_SQLServerAuthentication
+Parameter Sets: Properties_IntegratedSecurity, Properties_Credential
 Aliases: Server, ServerName, ServerInstance
 
 Required: True
@@ -113,7 +113,7 @@ Accept wildcard characters: False
 
 ```yaml
 Type: String
-Parameter Sets: Properties_IntegratedSecurity, Properties_SQLServerAuthentication
+Parameter Sets: Properties_IntegratedSecurity, Properties_Credential
 Aliases: Database, DatabaseName
 
 Required: False
@@ -128,7 +128,7 @@ Accept wildcard characters: False
 
 ```yaml
 Type: SecureString
-Parameter Sets: Properties_SQLServerAuthentication
+Parameter Sets: Properties_Credential
 Aliases:
 
 Required: True
@@ -143,7 +143,7 @@ Accept wildcard characters: False
 
 ```yaml
 Type: String
-Parameter Sets: Properties_SQLServerAuthentication
+Parameter Sets: Properties_Credential
 Aliases:
 
 Required: True
