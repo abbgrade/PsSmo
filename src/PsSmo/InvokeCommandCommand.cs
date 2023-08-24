@@ -45,7 +45,7 @@ namespace PsSmo
                     break;
 
                 case "File":
-                    WriteVerbose("Execute SQL script from file.");
+                    WriteVerbose($"Execute SQL script from file '{ InputFile.FullName }'.");
                     Text = File.ReadAllText(InputFile.FullName);
                     break;
 
