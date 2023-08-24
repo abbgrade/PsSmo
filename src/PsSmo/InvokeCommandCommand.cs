@@ -54,14 +54,19 @@ namespace PsSmo
             }
             try
             {
-                Instance.ConnectionContext.ExecuteNonQuery(sqlCommand: processSqlCmdText(Text, processVariables(Variables)));
-            } catch (Exception ex)
+                Instance.ConnectionContext.ExecuteNonQuery(sqlCommand: ProcessSqlCmdText(Text, ProcessVariables(Variables)));
+            }
+            catch (PipelineStoppedException)
+            {
+                throw;
+            }
+            catch (Exception ex)
             {
                 WriteError(new ErrorRecord(ex, ex.GetType().Name, ErrorCategory.NotSpecified, Text));
             }
         }
 
-        private Dictionary<string, string> processVariables(Hashtable variables)
+        private static Dictionary<string, string> ProcessVariables(Hashtable variables)
         {
             var variableDictionary = new Dictionary<string, string>();
 
@@ -76,12 +81,9 @@ namespace PsSmo
             return variableDictionary;
         }
 
-        private string processSqlCmdText(string text, Dictionary<string, string> variables)
+        private string ProcessSqlCmdText(string text, Dictionary<string, string> variables)
         {
-            if (variables == null)
-            {
-                variables = new Dictionary<string, string>();
-            }
+            variables ??= new Dictionary<string, string>();
 
             var result = new List<string>();
             var variableRegex = new Regex(@"\$\((\w*)\)");
