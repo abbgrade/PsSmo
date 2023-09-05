@@ -97,6 +97,8 @@ namespace PsSmo
         [ValidateNotNullOrEmpty()]
         public SecureString Password { get; set; }
 
+        [Parameter()]
+        public int StatementTimeout { get; set; } = 600;
         #endregion
 
         protected override void ProcessRecord()
@@ -111,6 +113,9 @@ namespace PsSmo
                         serverConnection: new ServerConnection(
                             sqlConnection: Connection
                         )
+                        {
+                            StatementTimeout = StatementTimeout
+                        }
                     );
                     break;
 
@@ -124,6 +129,9 @@ namespace PsSmo
                             serverConnection: new ServerConnection(
                                 sqlConnection: Connection
                             )
+                            {
+                                StatementTimeout = StatementTimeout
+                            }
                         );
                         break;
                     }
@@ -138,8 +146,7 @@ namespace PsSmo
                         if (DataSource.EndsWith("database.windows.net"))
                         {
                             Connection = new SqlConnection(connectionString: builder.ConnectionString);
-                            if (AccessToken == null)
-                                AccessToken = new AzureServiceTokenProvider().GetAccessTokenAsync("https://database.windows.net").Result;
+                            AccessToken ??= new AzureServiceTokenProvider().GetAccessTokenAsync("https://database.windows.net").Result;
                             Connection.AccessToken = AccessToken;
                         }
                         else
@@ -151,6 +158,9 @@ namespace PsSmo
                             serverConnection: new ServerConnection(
                                 sqlConnection: Connection
                             )
+                            {
+                                StatementTimeout = StatementTimeout
+                            }
                         );
                         break;
                     }
@@ -171,6 +181,9 @@ namespace PsSmo
                             serverConnection: new ServerConnection(
                                 sqlConnection: Connection
                             )
+                            {
+                                StatementTimeout = StatementTimeout
+                            }
                         );
                         break;
                     }

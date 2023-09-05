@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.2.1] - 2023-09-05
+
+### Added
+
+- Added StatementTimeout to `Connect-Instance` command.
+
 ## [1.2.0] - 2023-08-24
 
 ### Changed
