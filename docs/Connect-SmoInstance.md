@@ -15,23 +15,23 @@ schema: 2.0.0
 ### Properties_IntegratedSecurity (Default)
 ```
 Connect-SmoInstance [-DataSource] <String> [[-InitialCatalog] <String>] [-AccessToken <String>]
- [<CommonParameters>]
+ [-StatementTimeout <Int32>] [<CommonParameters>]
 ```
 
 ### SqlClient
 ```
-Connect-SmoInstance -Connection <SqlConnection> [<CommonParameters>]
+Connect-SmoInstance -Connection <SqlConnection> [-StatementTimeout <Int32>] [<CommonParameters>]
 ```
 
 ### ConnectionString
 ```
-Connect-SmoInstance [-ConnectionString] <String> [<CommonParameters>]
+Connect-SmoInstance [-ConnectionString] <String> [-StatementTimeout <Int32>] [<CommonParameters>]
 ```
 
 ### Properties_Credential
 ```
 Connect-SmoInstance [-DataSource] <String> [[-InitialCatalog] <String>] [-UserId] <String>
- [-Password] <SecureString> [<CommonParameters>]
+ [-Password] <SecureString> [-StatementTimeout <Int32>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -150,6 +150,21 @@ Required: True
 Position: 1
 Default value: None
 Accept pipeline input: True (ByPropertyName, ByValue)
+Accept wildcard characters: False
+```
+
+### -StatementTimeout
+This is the number of seconds that a statement is attempted to be sent to the server before it fails.
+
+```yaml
+Type: Int32
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: Named
+Default value: None
+Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
