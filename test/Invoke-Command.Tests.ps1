@@ -46,19 +46,20 @@ PRINT 'bar'
 
                 It 'stops on error' {
                     {
-                        $VerboseOutput = Invoke-SmoCommand -Command $Command -ErrorAction Stop -ErrorVariable ErrorOutput -Verbose -InformationVariable InformationOutput 4>&1
+                        $VerboseOutput = Invoke-SmoCommand -Command $Command -ErrorAction Stop -ErrorVariable ErrorOutput -Verbose -InformationVariable InformationOutput -WarningAction SilentlyContinue -WarningVariable WarningOutput 4>&1
                     } | Should -Throw 'An exception occurred while executing a Transact-SQL statement or batch.'
                     # $VerboseOutput[0].Message | Should -Be 'Execute SQL script from text.'
-                    # $InformationOutput[0].MessageData | Should -Be "SELECT 1/0`r`nPRINT 'foo'`r`n"
+                    # $InformationOutput[0].MessageData | Should -Be "SELECT 1/0`r`nPRINT 'foo'"
                 }
 
                 It 'continues on error' {
-                    $VerboseOutput = Invoke-SmoCommand -Command $Command -ErrorAction SilentlyContinue -ErrorVariable ErrorOutput -Verbose -InformationVariable InformationOutput 4>&1
+                    $VerboseOutput = Invoke-SmoCommand -Command $Command -ErrorAction SilentlyContinue -ErrorVariable ErrorOutput -Verbose -InformationVariable InformationOutput -WarningAction SilentlyContinue -WarningVariable WarningOutput 4>&1
                     $VerboseOutput[0].Message | Should -Be 'Execute SQL script from text.'
-                    $InformationOutput[0].MessageData | Should -Be "SELECT 1/0`r`nPRINT 'foo'`r`n"
+                    $InformationOutput[0].MessageData | Should -Be "SELECT 1/0`r`nPRINT 'foo'"
                     $ErrorOutput[0].Exception.Message | Should -Be 'An exception occurred while executing a Transact-SQL statement or batch.'
                     $ErrorOutput[0].Exception.InnerException.Errors[0].Message | Should -Be 'Divide by zero error encountered.'
-                    # $InformationOutput[1].MessageData | Should -Be "PRINT 'bar'`r`n" # still a bug
+                    # $InformationOutput[1].MessageData | Should -Be "PRINT 'bar'" # still a bug
+                    # $VerboseOutput[1].Message | Should -Be 'bar'
                 }
             }
 
@@ -80,51 +81,58 @@ PRINT 'bar'
                 }
 
                 It 'stops on error' {
-                    # {
-                        $VerboseOutput = Invoke-SmoCommand -Command $Command -ErrorAction Stop -ErrorVariable ErrorOutput -Verbose -InformationVariable InformationOutput 4>&1
-                    # } | Should -Throw 'An exception occurred while executing a Transact-SQL statement or batch.'
-                    # $VerboseOutput[0].Message | Should -Be 'Execute SQL script from text.'
-                    # $InformationOutput[0].MessageData | Should -Be "SELECT 1/0`r`nPRINT 'foo'`r`n"
-                }
+                    $VerboseOutput = Invoke-SmoCommand -Command $Command -ErrorAction Stop -ErrorVariable ErrorOutput -Verbose -InformationVariable InformationOutput -WarningAction SilentlyContinue -WarningVariable WarningOutput 4>&1
 
-                It 'continues on error' {
-                    $VerboseOutput = Invoke-SmoCommand -Command $Command -ErrorAction SilentlyContinue -ErrorVariable ErrorOutput -Verbose -InformationVariable InformationOutput -WarningAction SilentlyContinue -WarningVariable WarningOutput 4>&1
                     $WarningOutput[0].Message | Should -Be ':on error is not implemented'
                     $VerboseOutput[0].Message | Should -Be 'Execute SQL script from text.'
                     $InformationOutput[0].MessageData | Should -Be @"
-
 BEGIN TRANSACTION MIGRATION;
 
 SET TRANSACTION ISOLATION LEVEL SERIALIZABLE;
 
 SET XACT_ABORT ON
-
 "@
                     $InformationOutput[1].MessageData | Should -Be "PRINT 'bar'"
                     $VerboseOutput[1].Message | Should -Be 'bar'
+
                 }
             }
 
             Context 'SQLCMD' {
 
                 It 'works with separator' {
-                    Invoke-SmoCommand -Command @'
+                    $Command = @'
 PRINT 'foo'
 GO
 
 PRINT 'bar'
 GO
 '@
+                    $VerboseOutput = Invoke-SmoCommand -Command $Command -ErrorAction Stop -ErrorVariable ErrorOutput -Verbose -InformationVariable InformationOutput -WarningAction SilentlyContinue -WarningVariable WarningOutput 4>&1
+                    $VerboseOutput[0].Message | Should -Be 'Execute SQL script from text.'
+                    $InformationOutput[0].MessageData | Should -Be "PRINT 'foo'"
+                    $VerboseOutput[1].Message | Should -Be 'foo'
+                    $InformationOutput[1].MessageData | Should -Be "PRINT 'bar'"
+                    $VerboseOutput[2].Message | Should -Be 'bar'
                 }
 
-                It 'throws with undefined variables' {
-                    {
-                        Invoke-SmoCommand -Command 'PRINT ''$(foo)''' -ErrorAction Stop
-                    } | Should -Throw
-                }
+                Context ScriptWithVariable {
+                    BeforeAll {
+                        $Command = 'PRINT ''$(foo)'''
+                    }
 
-                It 'works with defined variables' {
-                    Invoke-SmoCommand -Command 'PRINT ''$(foo)''' -Variables @{ foo = 'bar' } -Verbose
+                    It 'throws with undefined variables' {
+                        {
+                            $VerboseOutput = Invoke-SmoCommand -Command $Command -ErrorAction Stop -ErrorVariable ErrorOutput -Verbose -InformationVariable InformationOutput -WarningAction SilentlyContinue -WarningVariable WarningOutput 4>&1
+                        } | Should -Throw 'Value for variable $(foo) was not given.'
+                    }
+
+                    It 'works with defined variables' {
+                        $VerboseOutput = Invoke-SmoCommand -Command $Command -Variables @{ foo = 'bar' } -ErrorAction Stop -ErrorVariable ErrorOutput -Verbose -InformationVariable InformationOutput -WarningAction SilentlyContinue -WarningVariable WarningOutput 4>&1
+                        $VerboseOutput[0].Message | Should -Be 'Execute SQL script from text.'
+                        $InformationOutput[0].MessageData | Should -Be "PRINT 'bar'"
+                        $VerboseOutput[1].Message | Should -Be 'bar'
+                    }
                 }
 
                 It 'works with :on error' {
@@ -138,7 +146,7 @@ PRINT 'foo'
                 }
 
                 It 'works with :setvar' {
-                    Invoke-SmoCommand -Command @'
+                    $Command = @'
 :setvar __IsSqlCmdEnabled "True"
 GO
 IF N'$(__IsSqlCmdEnabled)' NOT LIKE N'True'
@@ -147,22 +155,39 @@ IF N'$(__IsSqlCmdEnabled)' NOT LIKE N'True'
         SET NOEXEC ON;
     END
 '@
+                    $VerboseOutput = Invoke-SmoCommand -Command $Command -ErrorAction Stop -ErrorVariable ErrorOutput -Verbose -InformationVariable InformationOutput -WarningAction SilentlyContinue -WarningVariable WarningOutput 4>&1
+                    $VerboseOutput[0].Message | Should -Be 'Execute SQL script from text.'
+                    $InformationOutput[0].MessageData | Should -Be @"
+IF N'True' NOT LIKE N'True'
+    BEGIN
+        PRINT N'SQLCMD mode must be enabled to successfully execute this script.';
+        SET NOEXEC ON;
+    END
+"@
                 }
 
                 It 'ignores line comments' {
-                    Invoke-SmoCommand -Command @'
+                    $Command = @'
 -- :setvar foo $(foo)
 PRINT '$(foo)'
-'@ -Variables @{ foo = 'bar' }
+'@
+                    $VerboseOutput = Invoke-SmoCommand -Command $Command -Variables @{ foo = 'bar' } -ErrorAction Stop -ErrorVariable ErrorOutput -Verbose -InformationVariable InformationOutput -WarningAction SilentlyContinue -WarningVariable WarningOutput 4>&1
+                    $VerboseOutput[0].Message | Should -Be 'Execute SQL script from text.'
+                    $InformationOutput[0].MessageData | Should -Be "PRINT 'bar'"
+                    $VerboseOutput[1].Message | Should -Be 'bar'
                 }
 
                 It 'ignores block comments' {
-                    Invoke-SmoCommand -Command @'
+                    $Command = @'
 /*
 :setvar foo $(foo)
 */
 PRINT '$(foo)'
-'@ -Variables @{ foo = 'bar' }
+'@
+                    $VerboseOutput = Invoke-SmoCommand -Command $Command -Variables @{ foo = 'bar' } -ErrorAction Stop -ErrorVariable ErrorOutput -Verbose -InformationVariable InformationOutput -WarningAction SilentlyContinue -WarningVariable WarningOutput 4>&1
+                    $VerboseOutput[0].Message | Should -Be 'Execute SQL script from text.'
+                    $InformationOutput[0].MessageData | Should -Be "PRINT 'bar'"
+                    $VerboseOutput[1].Message | Should -Be 'bar'
                 }
             }
         }
