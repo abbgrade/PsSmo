@@ -48,7 +48,7 @@ namespace PsSmo
 
         private void ConnectionContext_StatementExecuted(object sender, StatementEventArgs e)
         {
-            WriteInformation(messageData: e.SqlStatement, tags: new string[] { "SqlStatement" });
+            WriteInformation(messageData: e.SqlStatement.Trim(), tags: new string[] { "SqlStatement" });
         }
 
         private void ConnectionContext_StateChange(object sender, System.Data.StateChangeEventArgs e)
