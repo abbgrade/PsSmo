@@ -33,10 +33,76 @@ Describe Invoke-Command {
                 }
             }
 
-            It 'throws on error' {
-                {
-                    Invoke-SmoCommand -Command 'SELECT 1/0' -ErrorAction Stop
-                } | Should -Throw
+            Context ScriptWithError {
+
+                BeforeAll {
+                    $Command = @'
+SELECT 1/0
+PRINT 'foo'
+GO
+PRINT 'bar'
+'@
+                }
+
+                It 'stops on error' {
+                    {
+                        $VerboseOutput = Invoke-SmoCommand -Command $Command -ErrorAction Stop -ErrorVariable ErrorOutput -Verbose -InformationVariable InformationOutput 4>&1
+                    } | Should -Throw 'An exception occurred while executing a Transact-SQL statement or batch.'
+                    # $VerboseOutput[0].Message | Should -Be 'Execute SQL script from text.'
+                    # $InformationOutput[0].MessageData | Should -Be "SELECT 1/0`r`nPRINT 'foo'`r`n"
+                }
+
+                It 'continues on error' {
+                    $VerboseOutput = Invoke-SmoCommand -Command $Command -ErrorAction SilentlyContinue -ErrorVariable ErrorOutput -Verbose -InformationVariable InformationOutput 4>&1
+                    $VerboseOutput[0].Message | Should -Be 'Execute SQL script from text.'
+                    $InformationOutput[0].MessageData | Should -Be "SELECT 1/0`r`nPRINT 'foo'`r`n"
+                    $ErrorOutput[0].Exception.Message | Should -Be 'An exception occurred while executing a Transact-SQL statement or batch.'
+                    $ErrorOutput[0].Exception.InnerException.Errors[0].Message | Should -Be 'Divide by zero error encountered.'
+                    # $InformationOutput[1].MessageData | Should -Be "PRINT 'bar'`r`n" # still a bug
+                }
+            }
+
+            Context ScriptWithTransactionError {
+
+                BeforeAll {
+                    $Command = @'
+:on error exit
+GO
+
+BEGIN TRANSACTION MIGRATION;
+
+SET TRANSACTION ISOLATION LEVEL SERIALIZABLE;
+
+SET XACT_ABORT ON
+GO
+PRINT 'bar'
+'@
+                }
+
+                It 'stops on error' {
+                    # {
+                        $VerboseOutput = Invoke-SmoCommand -Command $Command -ErrorAction Stop -ErrorVariable ErrorOutput -Verbose -InformationVariable InformationOutput 4>&1
+                    # } | Should -Throw 'An exception occurred while executing a Transact-SQL statement or batch.'
+                    # $VerboseOutput[0].Message | Should -Be 'Execute SQL script from text.'
+                    # $InformationOutput[0].MessageData | Should -Be "SELECT 1/0`r`nPRINT 'foo'`r`n"
+                }
+
+                It 'continues on error' {
+                    $VerboseOutput = Invoke-SmoCommand -Command $Command -ErrorAction SilentlyContinue -ErrorVariable ErrorOutput -Verbose -InformationVariable InformationOutput -WarningAction SilentlyContinue -WarningVariable WarningOutput 4>&1
+                    $WarningOutput[0].Message | Should -Be ':on error is not implemented'
+                    $VerboseOutput[0].Message | Should -Be 'Execute SQL script from text.'
+                    $InformationOutput[0].MessageData | Should -Be @"
+
+BEGIN TRANSACTION MIGRATION;
+
+SET TRANSACTION ISOLATION LEVEL SERIALIZABLE;
+
+SET XACT_ABORT ON
+
+"@
+                    $InformationOutput[1].MessageData | Should -Be "PRINT 'bar'"
+                    $VerboseOutput[1].Message | Should -Be 'bar'
+                }
             }
 
             Context 'SQLCMD' {
@@ -66,7 +132,9 @@ GO
 GO
 :on error exit
 GO
-'@
+
+PRINT 'foo'
+'@ | Should -BeNullOrEmpty
                 }
 
                 It 'works with :setvar' {
