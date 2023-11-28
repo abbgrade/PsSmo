@@ -13,6 +13,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Updated System.Management.Automation to 7.2.16 and PowerShell 7.2.16.
 - Updated Microsoft.Data.SqlClient to 5.1.1.
 
+### Fixed
+
+- ErrorAction Continue did not executed batches after an SQL error.
+
 ## [1.2.1] - 2023-09-05
 
 ### Added

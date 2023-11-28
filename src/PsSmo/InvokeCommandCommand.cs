@@ -2,6 +2,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.IO;
 using System.Management.Automation;
 using System.Text.RegularExpressions;
@@ -45,24 +46,30 @@ namespace PsSmo
                     break;
 
                 case "File":
-                    WriteVerbose($"Execute SQL script from file '{ InputFile.FullName }'.");
+                    WriteVerbose($"Execute SQL script from file '{InputFile.FullName}'.");
                     Text = File.ReadAllText(InputFile.FullName);
                     break;
 
                 default:
                     throw new NotImplementedException($"ParameterSetName {ParameterSetName} is not implemented");
             }
-            try
+
+            foreach (var sqlCommand in ProcessSqlCmdText(Text, ProcessVariables(Variables)))
             {
-                Instance.ConnectionContext.ExecuteNonQuery(sqlCommand: ProcessSqlCmdText(Text, ProcessVariables(Variables)));
-            }
-            catch (PipelineStoppedException)
-            {
-                throw;
-            }
-            catch (Exception ex)
-            {
-                WriteError(new ErrorRecord(ex, ex.GetType().Name, ErrorCategory.NotSpecified, Text));
+                try
+                {
+                    Instance.ConnectionContext.ExecuteNonQuery(
+                        sqlCommand: sqlCommand
+                    );
+                }
+                catch (PipelineStoppedException)
+                {
+                    throw;
+                }
+                catch (Exception ex)
+                {
+                    WriteError(new ErrorRecord(ex, ex.GetType().Name, ErrorCategory.NotSpecified, Text));
+                }
             }
         }
 
@@ -81,11 +88,12 @@ namespace PsSmo
             return variableDictionary;
         }
 
-        private string ProcessSqlCmdText(string text, Dictionary<string, string> variables)
+        private StringCollection ProcessSqlCmdText(string text, Dictionary<string, string> variables)
         {
             variables ??= new Dictionary<string, string>();
 
             var result = new List<string>();
+            var resultCollection = new List<List<string>>() { result };
             var variableRegex = new Regex(@"\$\((\w*)\)");
             var setVarRegex = new Regex(@":setvar (\w+) ?""(.+)?""");
             var blockCommentRegex = new Regex(@"/\*(.|\n)*?\*/");
@@ -99,14 +107,20 @@ namespace PsSmo
 
             foreach (var line in processedText.Split(Environment.NewLine))
             {
-                if (line.Trim().StartsWith(":on error", StringComparison.CurrentCultureIgnoreCase))
+                if (line.Trim().StartsWith("GO", StringComparison.CurrentCultureIgnoreCase))
+                {
+                    result = new List<string>();
+                    resultCollection.Add(result);
+                }
+                else if (line.Trim().StartsWith(":on error", StringComparison.CurrentCultureIgnoreCase))
                 {
                     WriteWarning(":on error is not implemented");
                 }
                 else if (line.Trim().StartsWith(":setvar", StringComparison.CurrentCultureIgnoreCase))
                 {
                     var match = setVarRegex.Match(line);
-                    if (match.Success) {
+                    if (match.Success)
+                    {
                         var variable = match.Groups[1].Value;
                         var value = match.Groups[2].Value;
                         variables[variable] = value;
@@ -119,7 +133,7 @@ namespace PsSmo
                 else
                 {
                     var processedLine = line;
-                    foreach(var variable in variables)
+                    foreach (var variable in variables)
                     {
                         processedLine = processedLine.Replace($"$({variable.Key})", variable.Value);
                     }
@@ -127,7 +141,7 @@ namespace PsSmo
                     var match = variableRegex.Match(input: processedLine);
                     if (match.Success)
                     {
-                        foreach(var variable in variables)
+                        foreach (var variable in variables)
                         {
                             WriteWarning($"$({variable.Key}) = '{variable.Value}'");
                         }
@@ -137,7 +151,10 @@ namespace PsSmo
                     result.Add(processedLine);
                 }
             }
-            return string.Join(separator: Environment.NewLine, result);
+            var batchCollection = new StringCollection();
+            foreach (var batch in resultCollection)
+                batchCollection.Add(string.Join(separator: Environment.NewLine, batch));
+            return batchCollection;
         }
     }
 }

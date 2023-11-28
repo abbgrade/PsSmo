@@ -59,8 +59,8 @@ PRINT 'bar'
                     $InformationOutput[0].MessageData | Should -Be "SELECT 1/0`r`nPRINT 'foo'"
                     $ErrorOutput[0].Exception.Message | Should -Be 'An exception occurred while executing a Transact-SQL statement or batch.'
                     $ErrorOutput[0].Exception.InnerException.Errors[0].Message | Should -Be 'Divide by zero error encountered.'
-                    # $InformationOutput[1].MessageData | Should -Be "PRINT 'bar'" # still a bug
-                    # $VerboseOutput[1].Message | Should -Be 'bar'
+                    $InformationOutput[1].MessageData | Should -Be "PRINT 'bar'"
+                    $VerboseOutput[1].Message | Should -Be 'bar'
                 }
             }
 
