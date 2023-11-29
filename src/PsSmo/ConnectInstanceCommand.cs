@@ -1,9 +1,10 @@
 ﻿
-using Microsoft.SqlServer.Management.Smo;
-using Microsoft.SqlServer.Management.Common;
-using System.Management.Automation;
+using Azure.Core;
+using Azure.Identity;
 using Microsoft.Data.SqlClient;
-using Microsoft.Azure.Services.AppAuthentication;
+using Microsoft.SqlServer.Management.Common;
+using Microsoft.SqlServer.Management.Smo;
+using System.Management.Automation;
 using System.Security;
 
 namespace PsSmo
@@ -146,7 +147,9 @@ namespace PsSmo
                         if (DataSource.EndsWith("database.windows.net"))
                         {
                             Connection = new SqlConnection(connectionString: builder.ConnectionString);
-                            AccessToken ??= new AzureServiceTokenProvider().GetAccessTokenAsync("https://database.windows.net").Result;
+                            AccessToken ??= new DefaultAzureCredential().GetToken(
+                                new TokenRequestContext(scopes: new string[] { "https://database.windows.net/.default" }) { }
+                            ).Token;
                             Connection.AccessToken = AccessToken;
                         }
                         else
