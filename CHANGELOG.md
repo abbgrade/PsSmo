@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Added command `Get-Schema`
+
 ### Changed
 
 - Updated Microsoft.SqlServer.SqlManagementObjects to 170.18.0.

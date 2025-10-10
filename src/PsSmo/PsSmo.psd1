@@ -72,8 +72,13 @@ PowerShellVersion = '7.2.16'
 FunctionsToExport = '*'
 
 # Cmdlets to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no cmdlets to export.
-CmdletsToExport = 'Connect-Instance', 'Disconnect-Instance', 'Get-Table',
-               'Invoke-Command'
+CmdletsToExport = @(
+    'Invoke-Command',
+    'Connect-Instance',
+    'Disconnect-Instance',
+    'Get-Schema',
+    'Get-Table'
+)
 
 # Variables to export from this module
 # VariablesToExport = @()
