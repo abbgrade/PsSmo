@@ -15,23 +15,26 @@ schema: 2.0.0
 ### Properties_IntegratedSecurity (Default)
 ```
 Connect-SmoInstance [-DataSource] <String> [[-InitialCatalog] <String>] [-AccessToken <String>]
- [-StatementTimeout <Int32>] [<CommonParameters>]
+ [-StatementTimeout <Int32>] [-ProgressAction <ActionPreference>] [<CommonParameters>]
 ```
 
 ### SqlClient
 ```
-Connect-SmoInstance -Connection <SqlConnection> [-StatementTimeout <Int32>] [<CommonParameters>]
+Connect-SmoInstance -Connection <SqlConnection> [-StatementTimeout <Int32>]
+ [-ProgressAction <ActionPreference>] [<CommonParameters>]
 ```
 
 ### ConnectionString
 ```
-Connect-SmoInstance [-ConnectionString] <String> [-StatementTimeout <Int32>] [<CommonParameters>]
+Connect-SmoInstance [-ConnectionString] <String> [-StatementTimeout <Int32>]
+ [-ProgressAction <ActionPreference>] [<CommonParameters>]
 ```
 
 ### Properties_Credential
 ```
 Connect-SmoInstance [-DataSource] <String> [[-InitialCatalog] <String>] [-UserId] <String>
- [-Password] <SecureString> [-StatementTimeout <Int32>] [<CommonParameters>]
+ [-Password] <SecureString> [-StatementTimeout <Int32>] [-ProgressAction <ActionPreference>]
+ [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -138,6 +141,21 @@ Accept pipeline input: True (ByPropertyName, ByValue)
 Accept wildcard characters: False
 ```
 
+### -StatementTimeout
+This is the number of seconds that a statement is attempted to be sent to the server before it fails.
+
+```yaml
+Type: Int32
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: Named
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
 ### -UserId
 {{ Fill UserId Description }}
 
@@ -153,13 +171,13 @@ Accept pipeline input: True (ByPropertyName, ByValue)
 Accept wildcard characters: False
 ```
 
-### -StatementTimeout
-This is the number of seconds that a statement is attempted to be sent to the server before it fails.
+### -ProgressAction
+{{ Fill ProgressAction Description }}
 
 ```yaml
-Type: Int32
+Type: ActionPreference
 Parameter Sets: (All)
-Aliases:
+Aliases: proga
 
 Required: False
 Position: Named

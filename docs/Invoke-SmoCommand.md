@@ -14,12 +14,14 @@ schema: 2.0.0
 
 ### Text
 ```
-Invoke-SmoCommand -Text <String> [-Variables <Hashtable>] [-Instance <Server>] [<CommonParameters>]
+Invoke-SmoCommand -Text <String> [-Variables <Hashtable>] [-Instance <Server>]
+ [-ProgressAction <ActionPreference>] [<CommonParameters>]
 ```
 
 ### File
 ```
-Invoke-SmoCommand -InputFile <FileInfo> [-Variables <Hashtable>] [-Instance <Server>] [<CommonParameters>]
+Invoke-SmoCommand -InputFile <FileInfo> [-Variables <Hashtable>] [-Instance <Server>]
+ [-ProgressAction <ActionPreference>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -88,6 +90,21 @@ Accept wildcard characters: False
 Type: Hashtable
 Parameter Sets: (All)
 Aliases:
+
+Required: False
+Position: Named
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -ProgressAction
+{{ Fill ProgressAction Description }}
+
+```yaml
+Type: ActionPreference
+Parameter Sets: (All)
+Aliases: proga
 
 Required: False
 Position: Named
