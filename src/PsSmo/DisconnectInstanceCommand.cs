@@ -15,7 +15,7 @@ namespace PsSmo
         )]
         [ValidateNotNullOrEmpty()]
         [Alias("Connection")]
-        public Server Instance { get; set; } = ConnectInstanceCommand.Instance;
+        new public Server Instance { get; set; } = ConnectInstanceCommand.Instance;
 
         protected override void ProcessRecord()
         {
