@@ -1,8 +1,13 @@
+
+if ( -Not $PsBuildTaskBranch ) {
+    $PsBuildTaskBranch = 'main'
+}
+
 #region InvokeBuild
 
 task UpdateBuildTasks {
     Invoke-WebRequest `
-        -Uri 'https://raw.githubusercontent.com/abbgrade/PsBuildTasks/main/DotNet/Build.Tasks.ps1' `
+        -Uri "https://raw.githubusercontent.com/abbgrade/PsBuildTasks/$PsBuildTaskBranch/DotNet/Build.Tasks.ps1" `
         -OutFile "$PSScriptRoot\Build.Tasks.ps1"
 }
 
@@ -13,7 +18,15 @@ task UpdateValidationWorkflow {
     [System.IO.FileInfo] $file = "$PSScriptRoot/../.github/workflows/build-validation.yml"
     New-Item -Type Directory $file.Directory -ErrorAction SilentlyContinue
     Invoke-WebRequest `
-        -Uri 'https://raw.githubusercontent.com/abbgrade/PsBuildTasks/main/GitHub/build-validation-matrix.yml' `
+        -Uri "https://raw.githubusercontent.com/abbgrade/PsBuildTasks/$PsBuildTaskBranch/GitHub/build-validation-matrix.yml" `
+        -OutFile $file
+}
+
+task UpdatePagesWorkflow {
+    [System.IO.FileInfo] $file = "$PSScriptRoot/../.github/workflows/build-pages.yml"
+    New-Item -Type Directory $file.Directory -ErrorAction SilentlyContinue
+    Invoke-WebRequest `
+        -Uri "https://raw.githubusercontent.com/abbgrade/PsBuildTasks/$PsBuildTaskBranch/GitHub/build-pages.yml" `
         -OutFile $file
 }
 
@@ -22,7 +35,7 @@ task UpdatePreReleaseWorkflow {
     [System.IO.FileInfo] $file = "$PSScriptRoot\..\.github\workflows\pre-release.yml"
     New-Item -Type Directory $file.Directory -ErrorAction SilentlyContinue
     Invoke-WebRequest `
-        -Uri 'https://raw.githubusercontent.com/abbgrade/PsBuildTasks/main/GitHub/pre-release-windows.yml' |
+        -Uri "https://raw.githubusercontent.com/abbgrade/PsBuildTasks/$PsBuildTaskBranch/GitHub/pre-release-windows.yml" |
     ForEach-Object { $_ -replace 'MyModuleName', $ModuleName } |
     Out-File $file -NoNewline
 }
@@ -32,10 +45,12 @@ task UpdateReleaseWorkflow {
     [System.IO.FileInfo] $file = "$PSScriptRoot\..\.github\workflows\release.yml"
     New-Item -Type Directory $file.Directory -ErrorAction SilentlyContinue
     Invoke-WebRequest `
-        -Uri 'https://raw.githubusercontent.com/abbgrade/PsBuildTasks/main/GitHub/release-windows.yml' |
+        -Uri "https://raw.githubusercontent.com/abbgrade/PsBuildTasks/$PsBuildTaskBranch/GitHub/release-windows.yml" |
     ForEach-Object { $_ -replace 'MyModuleName', $ModuleName } |
     Out-File $file -NoNewline
 }
+
+task UpdateWorkflows -Jobs UpdateValidationWorkflow, UpdatePagesWorkflow, UpdatePreReleaseWorkflow, UpdateReleaseWorkflow
 
 #endregion
 #region GitHub Pages
@@ -43,11 +58,11 @@ task UpdateReleaseWorkflow {
 task UpdateIndexPage {
     New-Item -Type Directory "$PSScriptRoot\..\docs" -ErrorAction SilentlyContinue
     Invoke-WebRequest `
-        -Uri 'https://raw.githubusercontent.com/abbgrade/PsBuildTasks/main/docs/index.md' `
+        -Uri "https://raw.githubusercontent.com/abbgrade/PsBuildTasks/$PsBuildTaskBranch/docs/index.md" `
         -OutFile "$PSScriptRoot\..\docs\index.md"
     Invoke-WebRequest `
-        -Uri 'https://raw.githubusercontent.com/abbgrade/PsBuildTasks/main/docs/_config.yml' `
-        -OutFile "$PSScriptRoot\..\docs\_config.yml"
+        -Uri "https://raw.githubusercontent.com/abbgrade/PsBuildTasks/$PsBuildTaskBranch/_config.yml" `
+        -OutFile "$PSScriptRoot\..\_config.yml"
 }
 
 #endregion
@@ -58,7 +73,7 @@ task UpdateDependabotConfig {
     [System.IO.FileInfo] $file = "$PSScriptRoot\..\.github\dependabot.yml"
     New-Item -Type Directory $file.Directory -ErrorAction SilentlyContinue
     Invoke-WebRequest `
-        -Uri 'https://raw.githubusercontent.com/abbgrade/PsBuildTasks/main/dependabot/dependabot.yml' |
+        -Uri "https://raw.githubusercontent.com/abbgrade/PsBuildTasks/$PsBuildTaskBranch/dependabot/dependabot.yml" |
     ForEach-Object { $_ -replace 'MyModuleName', $ModuleName } |
     Out-File $file -NoNewline
 }
@@ -70,8 +85,18 @@ task UpdateVsCodeTasks {
     [System.IO.FileInfo] $file = "$PSScriptRoot\..\.vscode\tasks.json"
     New-Item -Type Directory $file.Directory -ErrorAction SilentlyContinue
     Invoke-WebRequest `
-        -Uri 'https://raw.githubusercontent.com/abbgrade/PsBuildTasks/main/VsCode/tasks.json' `
+        -Uri "https://raw.githubusercontent.com/abbgrade/PsBuildTasks/$PsBuildTaskBranch/VsCode/tasks.json" `
         -OutFile $file
+}
+
+task UpdateVsCodeLaunch {
+    requires ModuleName
+    [System.IO.FileInfo] $file = "$PSScriptRoot\..\.vscode\launch.json"
+    New-Item -Type Directory $file.Directory -ErrorAction SilentlyContinue
+    Invoke-WebRequest `
+        -Uri "https://raw.githubusercontent.com/abbgrade/PsBuildTasks/$PsBuildTaskBranch/VsCode/launch.json" |
+    ForEach-Object { $_ -replace 'MyModuleName', $ModuleName } |
+    Out-File $file -NoNewline
 }
 
 #endregion
@@ -79,10 +104,10 @@ task UpdateVsCodeTasks {
 
 task UpdatePsBuildTasksTasks {
     Invoke-WebRequest `
-        -Uri 'https://raw.githubusercontent.com/abbgrade/PsBuildTasks/main/tasks/Dotnet-Matrix.Tasks.ps1' `
+        -Uri "https://raw.githubusercontent.com/abbgrade/PsBuildTasks/$PsBuildTaskBranch/tasks/Dotnet-Matrix.Tasks.ps1" `
         -OutFile "$PSScriptRoot\PsBuild.Tasks.ps1"
 }
 
 #endregion
 
-task UpdatePsBuildTasks -Jobs UpdateBuildTasks, UpdateValidationWorkflow, UpdatePreReleaseWorkflow, UpdateReleaseWorkflow, UpdateIndexPage, UpdateDependabotConfig, UpdateVsCodeTasks, UpdatePsBuildTasksTasks
+task UpdatePsBuildTasks -Jobs UpdateBuildTasks, UpdateWorkflows, UpdateIndexPage, UpdateDependabotConfig, UpdateVsCodeTasks, UpdateVsCodeLaunch, UpdatePsBuildTasksTasks
