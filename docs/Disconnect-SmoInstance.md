@@ -13,7 +13,7 @@ schema: 2.0.0
 ## SYNTAX
 
 ```
-Disconnect-SmoInstance [-Instance <Server>] [<CommonParameters>]
+Disconnect-SmoInstance [[-Instance] <Server>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -39,7 +39,7 @@ Parameter Sets: (All)
 Aliases: Connection
 
 Required: False
-Position: Named
+Position: 0
 Default value: None
 Accept pipeline input: True (ByValue)
 Accept wildcard characters: False

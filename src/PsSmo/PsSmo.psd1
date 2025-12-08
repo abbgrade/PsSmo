@@ -12,7 +12,7 @@
 RootModule = 'PsSmo.dll'
 
 # Version number of this module.
-ModuleVersion = '1.2.1'
+ModuleVersion = '1.3.0'
 
 # Supported PSEditions
 # CompatiblePSEditions = @()
@@ -33,7 +33,7 @@ Copyright = '(c) 2021 Steffen Kampmann. Alle Rechte vorbehalten.'
 Description = 'The PowerShell SQL Client module replaces the SQL Server utilities SQLCMD with native PowerShell commands.'
 
 # Minimum version of the PowerShell engine required by this module
-PowerShellVersion = '7.0'
+PowerShellVersion = '7.2.16'
 
 # Name of the PowerShell host required by this module
 # PowerShellHostName = ''
