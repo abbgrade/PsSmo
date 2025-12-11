@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Updated TargetFramework to net8.0.
 - Updated Microsoft.SqlServer.SqlManagementObjects to 180.10.0.
 - Updated Microsoft.Data.SqlClient to 5.2.3.
+- Updated Azure.Identity to 1.13.0.
 
 ### Added
 
