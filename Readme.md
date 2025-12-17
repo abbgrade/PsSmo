@@ -1,6 +1,6 @@
 # PsSmo
 
-The PowerShell SQL Client module replaces the SQL Server utilities [SQLCMD](https://docs.microsoft.com/de-de/sql/tools/sqlcmd-utility) with native PowerShell commands. It is part of [PsSqlTools](https://github.com/abbgrade/PsSqlTools).
+The PowerShell SQL Client module replaces the SQL Server utilities [SQLCMD](https://docs.microsoft.com/de-de/sql/tools/sqlcmd-utility) with native PowerShell commands. It is part of [PsSqlUtils](https://github.com/abbgrade/PsSqlUtils).
 
 ## Installation
 
