@@ -12,7 +12,7 @@
 RootModule = 'PsSmo.dll'
 
 # Version number of this module.
-ModuleVersion = '1.3.0'
+ModuleVersion = '1.4.0'
 
 # Supported PSEditions
 # CompatiblePSEditions = @()
@@ -33,7 +33,7 @@ Copyright = '(c) 2021 Steffen Kampmann. Alle Rechte vorbehalten.'
 Description = 'The PowerShell SQL Client module replaces the SQL Server utilities SQLCMD with native PowerShell commands.'
 
 # Minimum version of the PowerShell engine required by this module
-PowerShellVersion = '7.2.16'
+PowerShellVersion = '7.4'
 
 # Name of the PowerShell host required by this module
 # PowerShellHostName = ''
@@ -72,8 +72,13 @@ PowerShellVersion = '7.2.16'
 FunctionsToExport = '*'
 
 # Cmdlets to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no cmdlets to export.
-CmdletsToExport = 'Connect-Instance', 'Disconnect-Instance', 'Get-Table',
-               'Invoke-Command'
+CmdletsToExport = @(
+    'Invoke-Command',
+    'Connect-Instance',
+    'Disconnect-Instance',
+    'Get-Schema',
+    'Get-Table'
+)
 
 # Variables to export from this module
 # VariablesToExport = @()

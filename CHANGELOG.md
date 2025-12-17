@@ -7,13 +7,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.4.0] - 2025-12-11
+
+### Changed
+
+- Updated System.Management.Automation and PowerShellVersion to 7.4.
+- Updated TargetFramework to net8.0.
+- Updated Microsoft.SqlServer.SqlManagementObjects to 180.10.0.
+- Updated Microsoft.Data.SqlClient to 5.2.3.
+- Updated Azure.Identity to 1.13.0.
+
+### Added
+
+- Added command `Get-Schema`
+
 ## [1.3.0] - 2023-11-27
 
 ### Changed
 
 - Updated Microsoft.SqlServer.SqlManagementObjects to 170.18.0.
 - Updated System.Management.Automation to 7.2.16 and PowerShell 7.2.16.
-- Updated Microsoft.Data.SqlClient to 5.1.1.
+- Updated Microsoft.Data.SqlClient to 5.1.3.
 
 ## [1.2.1] - 2023-09-05
 
