@@ -3,6 +3,7 @@ on:
     branches: [ develop, bugfix/*, feature/*, release/* ]
   pull_request:
     branches: [ develop ]
+  workflow_dispatch:
 
 jobs:
   build-validation:
