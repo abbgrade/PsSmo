@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Updated Azure.Core to 1.57.0 for compatibility with Az v16.2.0
+- Updated Azure.Identity to 1.21.0 for compatibility with Az v16.2.0
+- removed Microsoft.Azure.Services.AppAuthentication
+- `ConnectInstanceCommand.cs`: Removed legacy `AzureServiceTokenProvider` dependency and replace with `DefaultAzureCredential` from `Azure.Identity` including CancellationToken
+- add `Microsoft.Data.SqlClient` as required assembly
+- add `$RunTimeIdentifier` in `Build.Dll`
+
+
 ## [1.4.1] - 2025-12-18
 
 ### Changed

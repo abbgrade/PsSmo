@@ -3,8 +3,10 @@ using Microsoft.SqlServer.Management.Smo;
 using Microsoft.SqlServer.Management.Common;
 using System.Management.Automation;
 using Microsoft.Data.SqlClient;
-using Microsoft.Azure.Services.AppAuthentication;
+using Azure.Core;
+using Azure.Identity;
 using System.Security;
+using System.Threading;
 
 namespace PsSmo
 {
@@ -101,6 +103,8 @@ namespace PsSmo
         public int StatementTimeout { get; set; } = 600;
         #endregion
 
+        private readonly CancellationTokenSource _cancellationTokenSource = new();
+
         protected override void ProcessRecord()
         {
             base.ProcessRecord();
@@ -146,7 +150,10 @@ namespace PsSmo
                         if (DataSource.EndsWith("database.windows.net"))
                         {
                             Connection = new SqlConnection(connectionString: builder.ConnectionString);
-                            AccessToken ??= new AzureServiceTokenProvider().GetAccessTokenAsync("https://database.windows.net").Result;
+                            AccessToken ??= new DefaultAzureCredential().GetToken(
+                                new TokenRequestContext(new[] { "https://database.windows.net/.default" }),
+                                _cancellationTokenSource.Token
+                            ).Token;
                             Connection.AccessToken = AccessToken;
                         }
                         else
@@ -194,6 +201,12 @@ namespace PsSmo
             }
 
             WriteObject(Instance);
+        }
+
+        protected override void StopProcessing()
+        {
+            base.StopProcessing();
+            _cancellationTokenSource.Cancel(throwOnFirstException: true);
         }
     }
 }

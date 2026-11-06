@@ -19,7 +19,8 @@ task SetPrerelease -If $BuildNumber {
 
 # Synopsis: Build the dll with the module commands.
 task Build.Dll -Jobs {
-	exec { dotnet publish $ModuleSourceDirectory -c $Configuration -o $ModulePublishDirectory }
+	$RunTimeIdentifier = [System.Runtime.InteropServices.RuntimeInformation]::RuntimeIdentifier
+	exec { dotnet publish $ModuleSourceDirectory -c $Configuration -o $ModulePublishDirectory -r $RunTimeIdentifier --self-contained false }
 	$Global:Manifest = Get-Item $ModulePublishDirectory/$ModuleName.psd1
 }, SetPrerelease
 
